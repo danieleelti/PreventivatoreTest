@@ -105,12 +105,12 @@ try:
 except ImportError:
     locations_module = None
 
-# --- IMPORTAZIONE MODULO HUBSPOT (NUOVO) ---
+# --- IMPORTAZIONE MODULO HUBSPOT ---
 try:
     import hubspot
 except ImportError:
     hubspot = None
-# -------------------------------------------
+# -----------------------------------
 
 # --- FUNZIONI DI UTILITÀ ---
 def enable_locations_callback():
@@ -121,7 +121,7 @@ def reset_preventivo():
     """Resetta la chat e svuota i campi di input."""
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
-    # Aggiunto reset per email tracking
+    # Aggiornato con il campo email
     keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_durata", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
@@ -270,10 +270,10 @@ with st.sidebar:
     # WIDGET INPUT
     cliente_input = st.text_input("Nome Cliente *", placeholder="es. Azienda Rossi SpA", key="wdg_cliente")
     
-    # --- NUOVO CAMPO EMAIL PER HUBSPOT ---
-    email_tracking_input = st.text_input("Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
-    # -------------------------------------
-
+    # --- CAMPO EMAIL AGGIUNTO QUI ---
+    email_tracking_input = st.text_input("📧 Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
+    # --------------------------------
+    
     col_pax, col_data = st.columns(2)
     with col_pax: pax_input = st.text_input("N. Pax", placeholder="50", key="wdg_pax")
     with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
