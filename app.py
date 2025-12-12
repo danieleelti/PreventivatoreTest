@@ -10,7 +10,7 @@ from datetime import datetime
 import pytz
 
 # --- 1. CONFIGURAZIONE PAGINA ---
-st.set_page_config(page_title="FATTURAGE", page_icon="🦁💰", layout="wide")
+st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
 # --- CSS PERSONALIZZATO ---
 st.markdown("""
@@ -527,3 +527,4 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
