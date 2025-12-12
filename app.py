@@ -105,12 +105,12 @@ try:
 except ImportError:
     locations_module = None
 
-# --- IMPORTAZIONE MODULO HUBSPOT ---
+# --- IMPORTAZIONE MODULO HUBSPOT (TRACCIAMENTO) ---
 try:
     import hubspot
 except ImportError:
     hubspot = None
-# -----------------------------------
+# --------------------------------------------------
 
 # --- FUNZIONI DI UTILITÀ ---
 def enable_locations_callback():
@@ -254,7 +254,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("🦁 TEST 2.0")
+    st.title("TEST") # Titolo modificato
     st.caption(f"Utente: **{st.session_state.username}**") 
     st.markdown("---")
     
@@ -270,9 +270,9 @@ with st.sidebar:
     # WIDGET INPUT
     cliente_input = st.text_input("Nome Cliente *", placeholder="es. Azienda Rossi SpA", key="wdg_cliente")
     
-    # --- CAMPO EMAIL AGGIUNTO QUI ---
+    # --- CAMPO EMAIL PER HUBSPOT ---
     email_tracking_input = st.text_input("📧 Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
-    # --------------------------------
+    # -------------------------------
     
     col_pax, col_data = st.columns(2)
     with col_pax: pax_input = st.text_input("N. Pax", placeholder="50", key="wdg_pax")
@@ -317,7 +317,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO CON NUOVO ALGORITMO RIGOROSO) ---
+# --- 5. SYSTEM PROMPT (LOGICA LINK HUBSPOT AGGIORNATA) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -411,13 +411,16 @@ Le categorie sono:
 Usa ESATTAMENTE questo HTML per il titolo (inserendo tutti i dati):
 `<div class="block-header"><span class="block-title">TABELLA RIEPILOGATIVA</span><span class="block-claim">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></div>`
 
-**LINK SCHEDA TECNICA:**
-* Il testo del link DEVE essere il nome del file (es. `Cooking.pdf`). Non usare "Link".
-* Formato: `[Cooking.pdf](URL)`
+**LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
+* Devi cercare nel database la colonna che contiene il link breve di HubSpot.
+* **CRITERIO DI SELEZIONE:** Usa ESCLUSIVAMENTE l'URL che inizia con `https://eu1.hubs.ly` o `https://hubs.ly`.
+* **DIVIETO:** NON usare link di Google Drive, Dropbox o altri URL lunghi (es. colonna T) se è presente un link `hubs.ly`.
+* Il testo del link DEVE essere il nome del file (es. `Cooking.pdf`). Non usare "Link" o "Scarica".
+* Formato Markdown: `[NomeFormat.pdf](LINK_HUBS_LY_TROVATO)`
 
 | Nome Format | Costo Totale (+IVA) | Scheda Tecnica |
 | :--- | :--- | :--- |
-| 🍳 Cooking | € 2.400,00 | [Cooking.pdf](...) |
+| 🍳 Cooking | € 2.400,00 | [Cooking.pdf](https://eu1.hubs.ly/...) |
 
 **FASE 4: INFO UTILI**
 Copia ESATTAMENTE questo blocco:
@@ -461,7 +464,7 @@ chat_input = st.chat_input("Chiedi una modifica...")
 if chat_input: prompt_to_process = chat_input
 
 # --- 7. RENDERING CHAT ---
-st.title("🦁 💰 FATTURAGE 💰 🦁")
+st.title("TEST") # Titolo Main
 for message in st.session_state.messages:
     role_to_show = "assistant" if message["role"] == "model" else message["role"]
     with st.chat_message(role_to_show): st.markdown(message["content"], unsafe_allow_html=True)
@@ -504,13 +507,14 @@ if prompt_to_process:
                     chat = model.start_chat(history=history_gemini[:-1])
                     response = chat.send_message(prompt_to_process)
                     
-                    # --- MODIFICA HUBSPOT: INIEZIONE TRACCIAMENTO ---
+                    # --- MODIFICA HUBSPOT: ESPANSIONE LINK CORTO E TRACCIAMENTO ---
                     response_text_raw = response.text
                     if hubspot and email_tracking_input:
+                         # Chiama la versione 4.0 di hubspot.py che gestisce hubs.ly + requests
                          response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
                     else:
                          response_text = response_text_raw
-                    # ------------------------------------------------
+                    # --------------------------------------------------------------
 
                     st.markdown(response_text, unsafe_allow_html=True) 
                     st.session_state.messages.append({"role": "model", "content": response_text})
@@ -527,5 +531,3 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
-
-
