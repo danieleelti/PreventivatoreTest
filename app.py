@@ -99,11 +99,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- IMPORTAZIONE MODULO ESTERNO (LOCATION) ---
+# --- IMPORTAZIONE MODULO LOCATION ---
 try:
     import locations_module
 except ImportError:
     locations_module = None
+
+# --- IMPORTAZIONE MODULO HUBSPOT (NUOVO) ---
+try:
+    import hubspot
+except ImportError:
+    hubspot = None
+# -------------------------------------------
 
 # --- FUNZIONI DI UTILITÀ ---
 def enable_locations_callback():
@@ -114,7 +121,8 @@ def reset_preventivo():
     """Resetta la chat e svuota i campi di input."""
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
-    keys_to_clear = ["wdg_cliente", "wdg_pax", "wdg_data", "wdg_citta", "wdg_durata", "wdg_obiettivo"]
+    # Aggiunto reset per email tracking
+    keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_durata", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
             st.session_state[key] = ""
@@ -261,6 +269,11 @@ with st.sidebar:
 
     # WIDGET INPUT
     cliente_input = st.text_input("Nome Cliente *", placeholder="es. Azienda Rossi SpA", key="wdg_cliente")
+    
+    # --- NUOVO CAMPO EMAIL PER HUBSPOT ---
+    email_tracking_input = st.text_input("Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
+    # -------------------------------------
+
     col_pax, col_data = st.columns(2)
     with col_pax: pax_input = st.text_input("N. Pax", placeholder="50", key="wdg_pax")
     with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
@@ -396,7 +409,7 @@ Le categorie sono:
 
 **FASE 3: TABELLA RIEPILOGATIVA**
 Usa ESATTAMENTE questo HTML per il titolo (inserendo tutti i dati):
-`<div class="block-header"><span class="block-title">TABELLA RIEPILOGATIVA</span><span class="block-claim">Brief: {cliente_input} | {pax_input} pax | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></div>`
+`<div class="block-header"><span class="block-title">TABELLA RIEPILOGATIVA</span><span class="block-claim">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></div>`
 
 **LINK SCHEDA TECNICA:**
 * Il testo del link DEVE essere il nome del file (es. `Cooking.pdf`). Non usare "Link".
@@ -490,7 +503,14 @@ if prompt_to_process:
                     
                     chat = model.start_chat(history=history_gemini[:-1])
                     response = chat.send_message(prompt_to_process)
-                    response_text = response.text
+                    
+                    # --- MODIFICA HUBSPOT: INIEZIONE TRACCIAMENTO ---
+                    response_text_raw = response.text
+                    if hubspot and email_tracking_input:
+                         response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
+                    else:
+                         response_text = response_text_raw
+                    # ------------------------------------------------
 
                     st.markdown(response_text, unsafe_allow_html=True) 
                     st.session_state.messages.append({"role": "model", "content": response_text})
