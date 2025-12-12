@@ -254,7 +254,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("🦁 FATTURAGE 2.0")
+    st.title("🦁 TEST 2.0")
     st.caption(f"Utente: **{st.session_state.username}**") 
     st.markdown("---")
     
@@ -527,4 +527,5 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
