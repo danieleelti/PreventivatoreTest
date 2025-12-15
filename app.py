@@ -358,7 +358,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA RIEPILOGATIVA ROBUSTA) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA RIEPILOGATIVA A 3 COLONNE + INFO FINALI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -452,13 +452,14 @@ Le categorie sono:
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (STRUTTURA HTML ROBUSTA)**
+**FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE)**
 NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border="0"`).
+NON aggiungere colonne extra (es. note, durata, pax). SOLO le 3 colonne specificate qui sotto.
 
 **TITOLO TABELLA:**
 `<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE):**
+**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE):**
 `<table width="100%" border="0" cellspacing="0" cellpadding="10" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
     <th width="40%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Nome Format</th>
@@ -470,16 +471,13 @@ NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border=
     <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;">€ 2.400,00</td>
     <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
-</table><br><br>`
+</table>`
 
-**NOTE TECNICHE LINK HUBSPOT:**
-* Cerca link `https://eu1.hubs.ly` o `https://hubs.ly`.
-* Testo link = Nome file (es. `Cooking.pdf`).
+**FASE 4: INFO UTILI (OBBLIGATORIO)**
+Scrivi SEMPRE questo blocco finale, DOPO aver chiuso la tabella:
 
-**FASE 4: INFO UTILI (IMPORTANTE: SCRIVILE SEMPRE)**
-Assicurati di scrivere questo blocco ALLA FINE, dopo aver chiuso la tabella:
-
-### Informazioni Utili
+<br><br>
+**Informazioni Utili**
 
 ✔️ **Tutti i format sono nostri** e possiamo personalizzarli senza alcun problema.
 
