@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (MODIFICATO CON HTML ANNI 90, CELLPADDING 10 E COLONNA ROSSA INVISIBILE) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: NO BR TRA TITOLO E FORMAT) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -426,7 +426,8 @@ Copia ESATTAMENTE:
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format che spiega l'attività.<br>`
+⚠️ **ATTENZIONE:** NON inserire spazi o `<br>` tra la fine della tabella titolo e l'inizio del primo format. Devono essere attaccati.
+`<strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format che spiega l'attività.<br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
