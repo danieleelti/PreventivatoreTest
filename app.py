@@ -367,13 +367,13 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT TITOLI (NERO SU BIANCO + RIGA ROSSA)**
+⚠️ **IMPORTANTE: LAYOUT TITOLI (GRIGIO CHIARO + RIGA ROSSA)**
 Usa ESCLUSIVAMENTE questo HTML. 
-Titolo nero su sfondo bianco. Riga di separazione (spacer) con sfondo ROSSO.
+Titolo nero su sfondo GRIGIO CHIARO (#f8f9fa). Riga di separazione (spacer) con sfondo ROSSO.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff; padding: 25px;" align="left">
+    <td bgcolor="#f8f9fa" style="background-color: #f8f9fa; padding: 25px;" align="left">
       <font color="#000000" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #000000;">TITOLO CATEGORIA</font><br>
       <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">CLAIM</font>
     </td>
@@ -384,8 +384,9 @@ Copia ESATTAMENTE:
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-⚠️ **SPAZIATURA:** Usa un solo `<br>` alla fine della descrizione per spaziare i format.
-`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
+⚠️ **NO EMOJI:** NON usare emoji nei titoli.
+⚠️ **SPAZIATURA:** Usa `<br><br>` (doppio break) alla fine della descrizione per garantire lo spazio vuoto tra i format.
+`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -409,11 +410,11 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (STILE NERO SU BIANCO):**
-⚠️ **ISTRUZIONE:** Usa lo stesso stile (Nero su Bianco + Riga Rossa) delle categorie.
+**TITOLO TABELLA (STILE GRIGIO CHIARO):**
+⚠️ **ISTRUZIONE:** Usa lo stesso stile (Grigio Chiaro + Riga Rossa) delle categorie.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff; padding: 25px;" align="left">
+    <td bgcolor="#f8f9fa" style="background-color: #f8f9fa; padding: 25px;" align="left">
       <font color="#000000" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #000000;">TABELLA RIEPILOGATIVA</font><br>
       <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
@@ -554,6 +555,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
