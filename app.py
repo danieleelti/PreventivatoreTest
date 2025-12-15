@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (TAHOMA) ---
+# --- CSS PERSONALIZZATO (Visualizzazione Anteprima Streamlit) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -37,36 +37,9 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* BLOCCHI ROSSI (Titoli Categorie e Tabella) */
-    .block-header {
-        background-color: #f8f9fa;
-        border-left: 5px solid #ff4b4b;
-        padding: 15px;
-        margin-top: 30px !important;
-        margin-bottom: 20px !important;
-        border-radius: 0 8px 8px 0;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-    }
-    .block-title {
-        font-family: 'Tahoma', sans-serif !important;
-        font-size: 18px !important;
-        font-weight: 900 !important;
-        text-transform: uppercase;
-        color: #333 !important;
-        display: block;
-        margin-bottom: 4px;
-    }
-    .block-claim {
-        font-family: 'Tahoma', sans-serif !important;
-        font-size: 13px !important;
-        font-style: italic !important;
-        color: #666 !important;
-        display: block;
-    }
-
-    /* Tabelle */
+    /* Le tabelle nell'anteprima Streamlit si adattano, ma il codice copiato sarà fisso a 600px */
     div[data-testid="stChatMessage"] table {
-        width: 100% !important;
+        width: 100% !important; 
         border-collapse: collapse !important;
         border: 0px solid transparent !important;
         font-size: 14px !important;
@@ -129,7 +102,6 @@ def reset_preventivo():
     for key in keys_to_clear:
         if key in st.session_state:
             st.session_state[key] = ""
-    # Reset specifico per la durata
     if "wdg_durata" in st.session_state:
         st.session_state["wdg_durata"] = "1-2h"
 
@@ -172,7 +144,6 @@ def database_to_string(database_list):
             clean_riga = {}
             for k, v in riga.items():
                 val_str = str(v) if v is not None else ""
-                # Pulizia automatica spazi nei link
                 if val_str.strip().lower().startswith("http") and " " in val_str:
                     val_str = val_str.replace(" ", "%20")
                 clean_riga[k] = val_str
@@ -354,7 +325,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLE FISSE A 600PX PER STABILITÀ) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: FIXED 600PX WIDTH PER TUTTE LE TABELLE) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -432,7 +403,7 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT FISSO 600PX PER STABILITÀ**
+⚠️ **IMPORTANTE: LAYOUT FISSO 600PX**
 1.  Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE con `width="600"`:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
@@ -449,15 +420,15 @@ Le categorie sono:
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE - LARGHEZZA 600PX)**
+**FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE - 600PX FISSI)**
 NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border="0"`).
 NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
-⚠️ **CRITICO:** Inserisci nella tabella **TUTTI E 12 I FORMAT** presentati sopra. Non fare solo 3 esempi.
+⚠️ **CRITICO:** Inserisci nella tabella **TUTTI E 12 I FORMAT** presentati sopra.
 
 **TITOLO TABELLA:**
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**CONTENUTO TABELLA (TEMPLATE ESATTO 600PX - SOLO 3 CELLE):**
+**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE - WIDTH 600):**
 `<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px; min-width: 600px; border: 0 !important; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
     <th width="240" align="left" style="width: 240px; font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Nome Format</th>
@@ -472,7 +443,7 @@ NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
 </table>`
 
 **FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare per spaziare.
+Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare.
 
 <br><br>
 <strong style="font-family: 'Tahoma', sans-serif; font-size: 16px;">Informazioni Utili</strong><br><br>
