@@ -12,6 +12,10 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
+# --- GENERAZIONE SPACER LUNGHISSIMO (800 caratteri) ---
+# Questo serve per forzare la larghezza a 600px anche con font 1px
+spacer_text = "_" * 800 
+
 # --- CSS PERSONALIZZATO (Visualizzazione Anteprima Streamlit) ---
 st.markdown("""
 <style>
@@ -37,13 +41,14 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* FORZATURA TABELLE A 600PX ANCHE IN ANTEPRIMA STREAMLIT */
+    /* FORZATURA TABELLE STREAMLIT: Bordi TRASPARENTI e larghezza fissa */
     div[data-testid="stChatMessage"] table {
         width: 600px !important; 
         min-width: 600px !important;
         max-width: 600px !important;
         border-collapse: collapse !important;
-        border: 0px solid transparent !important;
+        border: 0px solid transparent !important; /* Bordi invisibili */
+        outline: none !important;
         font-size: 14px !important;
         margin-top: 10px !important;
         font-family: 'Tahoma', sans-serif !important;
@@ -54,12 +59,15 @@ st.markdown("""
         font-weight: bold;
         text-align: left;
         padding: 12px !important;
-        border-bottom: 0px solid transparent !important;
+        border: 0px solid transparent !important; /* Bordi invisibili */
+        outline: none !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] td {
         padding: 10px !important;
-        border-bottom: 1px solid #f0f0f0 !important;
+        border: 0px solid transparent !important; /* Bordi invisibili */
+        border-bottom: 1px solid #f0f0f0 !important; /* Solo riga sottile sotto */
+        outline: none !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     
@@ -99,7 +107,6 @@ def reset_preventivo():
     """Resetta la chat e svuota i campi di input."""
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
-    # Aggiornato con il campo email
     keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
@@ -170,7 +177,6 @@ def salva_preventivo_su_db(cliente, utente, pax, data_evento, citta, contenuto):
         data_oggi = now.strftime("%Y-%m-%d")
         ora_oggi = now.strftime("%H:%M:%S")
         
-        # Colonne: Nome Cliente | Utente | Data Prev | Ora Prev | Pax | Data Evento | Città | Contenuto
         row = [cliente, utente, data_oggi, ora_oggi, pax, data_evento, citta, contenuto]
         sheet.append_row(row)
         return True
@@ -224,7 +230,6 @@ if "messages" not in st.session_state or not st.session_state.messages:
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
             
-            # --- Safety settings sbloccati per aforismi ---
             safety_quote = {
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -327,7 +332,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: RIGA ANCORAGGIO INVISIBILE) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: BORDI INVISIBILI + RIGHE SEPARATE + SPACER EXTRA LONG) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -335,7 +340,7 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 {context_brief}
 
 ### 🛡️ PROTOCOLLO
-1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
+1.  **USO DEL DATABASE:** Usa SOLO i dati caricati.
 2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
 3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
 
@@ -405,76 +410,77 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT CON RIGA DI ANCORAGGIO INVISIBILE**
+⚠️ **IMPORTANTE: LAYOUT CON SPACER GIGANTE E BORDI INVISIBILI**
 Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. 
-La riga rossa contiene il pipe colorato. L'ultima riga contiene una lunghissima stringa di underscore bianchi per forzare la larghezza.
+NON DEVONO ESSERCI BORDI VISIBILI (`border="0"`, `style="border: none"`).
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important; margin-top: 20px; margin-bottom: 20px;">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px;">|</td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;">&nbsp;</td>
-    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
+    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px; border: none !important;">|</td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: none !important;">&nbsp;</td>
+    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">
       <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br>
       <span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span>
     </td>
   </tr>
   <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff;">______________________________________________________________________________________________________________________________________________________</td>
+    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
-2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format. **DEVI USARE QUESTO TEMPLATE HTML PER OGNI FORMAT:**
+2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
 `<div style="font-family: 'Tahoma', sans-serif; margin-bottom: 15px;"><strong style="font-size: 15px;">EMOJI NOME FORMAT</strong><br><span style="font-size: 14px; color: #000;">Descrizione breve e accattivante del format che spiega l'attività.</span></div>`
 
 Le categorie sono:
-1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
-2.  **LE NOVITÀ** (4 format) - Claim: "Freschi di lancio"
-3.  **VIBE & RELAX** (2 format) - Claim: "Atmosfera e condivisione"
-4.  **SOCIAL** (2 format) - Claim: "Impatto positivo"
+1.  **I BEST SELLER** (4 format)
+2.  **LE NOVITÀ** (4 format)
+3.  **VIBE & RELAX** (2 format)
+4.  **SOCIAL** (2 format)
 
 *Regole Format:* Usa il grassetto HTML per il titolo. NON usare Markdown.
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (CON RIGA ANCORAGGIO)**
+**FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - 12 RIGHE DISTINTE)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
-NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
-⚠️ **CRITICO:** Inserisci nella tabella **TUTTI E 12 I FORMAT** presentati sopra.
+⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`. NON mettere tutti i format in una sola riga.
+⚠️ **BORDI:** Usa `border="0"` e `style="border: none"`. Solo le celle hanno un bordo sotto (`border-bottom`).
 
 **TITOLO TABELLA:**
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important; margin-top: 30px; margin-bottom: 10px;">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px;">|</td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;">&nbsp;</td>
-    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
+    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px; border: none !important;">|</td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: none !important;">&nbsp;</td>
+    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">
       <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br>
       <span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span>
     </td>
   </tr>
   <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff;">______________________________________________________________________________________________________________________________________________________</td>
+    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
-**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE - ANCHOR IN FONDO):**
-`<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px; min-width: 600px; border-collapse: collapse;">
+**CONTENUTO TABELLA (SEGUI QUESTO SCHEMA PER OGNI FORMAT):**
+`<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important;">
   <tr style="background-color: #f1f3f4;">
-    <th width="240" align="left" style="width: 240px; font-family: 'Tahoma', sans-serif; text-align: left;">Nome Format</th>
-    <th width="120" align="left" style="width: 120px; font-family: 'Tahoma', sans-serif; text-align: left;">Costo Totale (+IVA)</th>
-    <th width="240" align="left" style="width: 240px; font-family: 'Tahoma', sans-serif; text-align: left;">Scheda Tecnica</th>
+    <th width="240" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Nome Format</th>
+    <th width="120" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Costo Totale (+IVA)</th>
+    <th width="240" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Scheda Tecnica</th>
+  </tr>
+  
+  <tr>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;"><strong>🍳 Cooking</strong></td>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;">€ 2.400,00</td>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
   <tr>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;"><strong>🍳 Cooking</strong></td>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;">€ 2.400,00</td>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
-  </tr>
-  <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff;">______________________________________________________________________________________________________________________________________________________</td>
+    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
 **FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare.
+Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare per spaziare.
 
 <br><br>
 <strong style="font-family: 'Tahoma', sans-serif; font-size: 16px;">Informazioni Utili</strong><br><br>
