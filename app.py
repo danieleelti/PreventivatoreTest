@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (Visualizzazione Anteprima Streamlit) ---
+# --- CSS PERSONALIZZATO (TAHOMA) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -327,7 +327,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLE CORAZZATE CON SPACER E WIDTH FORZATO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA MADRE + CELLA ROSSA PIENA) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -405,13 +405,15 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT TITOLI CATEGORIE (600PX FISSI - ANTI-COLLASSO)**
-Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px !important; min-width: 600px !important; margin-top: 20px; margin-bottom: 20px;">
+⚠️ **IMPORTANTE: LAYOUT FISSO 600PX + CELLA ROSSA PIENA**
+Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. 
+La cella rossa contiene il carattere pipe `|` dello stesso colore (`color: #ff4b4b`) per non farla collassare.
+Copia ESATTAMENTE:
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px !important; min-width: 5px !important; background-color: #ff4b4b;">&nbsp;</td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px !important; min-width: 10px !important; background-color: #f8f9fa;">&nbsp;</td>
-    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px !important; min-width: 585px !important; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
+    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px;">|</td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;">&nbsp;</td>
+    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
       <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br>
       <span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span>
     </td>
@@ -436,12 +438,12 @@ NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border=
 NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
 ⚠️ **CRITICO:** Inserisci nella tabella **TUTTI E 12 I FORMAT** presentati sopra.
 
-**TITOLO TABELLA:**
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px !important; min-width: 600px !important; margin-top: 30px; margin-bottom: 10px;">
+**TITOLO TABELLA (STRUTTURA CELLA ROSSA PIENA):**
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px !important; min-width: 5px !important; background-color: #ff4b4b;">&nbsp;</td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px !important; min-width: 10px !important; background-color: #f8f9fa;">&nbsp;</td>
-    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px !important; min-width: 585px !important; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
+    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px;">|</td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;">&nbsp;</td>
+    <td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;">
       <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br>
       <span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span>
     </td>
@@ -449,7 +451,7 @@ NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
 </table>`
 
 **CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE - WIDTH 600):**
-`<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px !important; min-width: 600px !important; border-collapse: collapse;">
+`<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px; min-width: 600px; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
     <th width="240" align="left" style="width: 240px; font-family: 'Tahoma', sans-serif; text-align: left;">Nome Format</th>
     <th width="120" align="left" style="width: 120px; font-family: 'Tahoma', sans-serif; text-align: left;">Costo Totale (+IVA)</th>
@@ -463,7 +465,7 @@ NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
 </table>`
 
 **FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare.
+Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare per spaziare.
 
 <br><br>
 <strong style="font-family: 'Tahoma', sans-serif; font-size: 16px;">Informazioni Utili</strong><br><br>
