@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: IMAGE RED CORRETTA + SPACER 125) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: LARGHEZZA IMG 59x98 E LINK HUBSPOT TASSATIVI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -403,14 +403,14 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
-La prima cella (TD width 5) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMAGINE QUADRATINO ROSSO per forzare la larghezza corretta.
-⚠️ **FIX LARGHEZZA:** Usa `padding:0px` e inserisci l'immagine `https://www.teambuilding.it/red.png`.
+La prima cella (TD width 59) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMAGINE red.png con dimensioni forzate 59x98.
+⚠️ **FIX LARGHEZZA:** Usa `padding:0px`, `width:59px` e inserisci l'immagine `https://www.teambuilding.it/red.png`.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" height="5" style="display: block; border: 0;"></td>
+    <td width="59" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 59px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
-    <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
+    <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
         <tr>
           <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -452,12 +452,12 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png).
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png 59x98).
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" height="5" style="display: block; border: 0;"></td>
+    <td width="59" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 59px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
-    <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
+    <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
         <tr>
           <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -485,7 +485,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   <tr>
     <td align="left"><strong>🍳 Nome Format</strong></td>
     <td align="center">€ Prezzo</td>
-    <td align="center"><a href="LINK_DALLA_COLONNA_LINKHUBSPOT">NomeFormat.pdf</a></td>
+    <td align="center"><a href="LINK_DALLA_COLONNA_LinkHubSpot">NomeFormat.pdf</a></td>
   </tr>
   
   <tr>
