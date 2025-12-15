@@ -124,7 +124,6 @@ def reset_preventivo():
     """Resetta la chat e svuota i campi di input."""
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
-    # Aggiornato con il campo email
     keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
@@ -171,7 +170,6 @@ def database_to_string(database_list):
             clean_riga = {}
             for k, v in riga.items():
                 val_str = str(v) if v is not None else ""
-                # Pulizia automatica spazi nei link
                 if val_str.strip().lower().startswith("http") and " " in val_str:
                     val_str = val_str.replace(" ", "%20")
                 clean_riga[k] = val_str
@@ -196,7 +194,6 @@ def salva_preventivo_su_db(cliente, utente, pax, data_evento, citta, contenuto):
         data_oggi = now.strftime("%Y-%m-%d")
         ora_oggi = now.strftime("%H:%M:%S")
         
-        # Colonne: Nome Cliente | Utente | Data Prev | Ora Prev | Pax | Data Evento | Città | Contenuto
         row = [cliente, utente, data_oggi, ora_oggi, pax, data_evento, citta, contenuto]
         sheet.append_row(row)
         return True
@@ -250,7 +247,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
             
-            # --- Sblocco Safety Settings anche per la quote ---
+            # Safety settings sbloccati
             safety_quote = {
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -353,7 +350,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TEMPLATE FORMAT ESPLICITO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: FORZATURA LARGHEZZA TOTALE + 12 FORMAT) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -431,8 +428,8 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-**ISTRUZIONI GRAFICHE CATEGORIE E FORMAT:**
-1.  **TITOLO CATEGORIA:** Usa ESCLUSIVAMENTE questo HTML (Copia-Incolla esatto con width 100%):
+⚠️ **IMPORTANTE: SPAZIATURA E LAYOUT**
+1.  Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE con `width="100%"` e `min-width: 100%` ovunque:
 `<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td width="100%" bgcolor="#f8f9fa" align="left" style="width: 100%; background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format. **DEVI USARE QUESTO TEMPLATE HTML PER OGNI FORMAT:**
@@ -446,14 +443,15 @@ Le categorie sono:
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE)**
+**FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE - TUTTI I 12 FORMAT)**
 NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border="0"`).
-NON aggiungere colonne extra (es. note, durata, pax). SOLO le 3 colonne specificate nel template.
+NON aggiungere colonne extra. SOLO le 3 colonne specificate nel template.
+⚠️ **CRITICO:** Inserisci nella tabella **TUTTI E 12 I FORMAT** presentati sopra. Non fare solo 3 esempi. La tabella deve essere completa.
 
 **TITOLO TABELLA:**
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td width="100%" bgcolor="#f8f9fa" align="left" style="width: 100%; background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE):**
+**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE - RIPETI PER 12 VOLTE):**
 `<table width="100%" border="0" cellspacing="0" cellpadding="10" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
     <th width="40%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Nome Format</th>
