@@ -367,19 +367,19 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT BANNER UNICO (Cellpadding 25 + Font Bianco Forzato)**
+⚠️ **IMPORTANTE: LAYOUT TITOLI (NERO SU BIANCO + RIGA ROSSA)**
 Usa ESCLUSIVAMENTE questo HTML. 
-Il colore del testo è forzato con `<font color="#ffffff">` direttamente attorno al testo per battere gli stili di HubSpot.
+Titolo nero su sfondo bianco. Riga di separazione (spacer) con sfondo ROSSO.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 25px; color: #ffffff;">
-      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 16px;"><b>TITOLO CATEGORIA</b></font><br>
-      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 13px;"><i>CLAIM</i></font>
+    <td bgcolor="#ffffff" style="background-color: #ffffff; padding: 25px;" align="left">
+      <font color="#000000" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #000000;">TITOLO CATEGORIA</font><br>
+      <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">CLAIM</font>
     </td>
   </tr>
   <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff; line-height: 1px; font-size: 1px;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; line-height: 1px; font-size: 1px;"><font color="#e51b20" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -409,17 +409,17 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (BANNER UNICO):**
-⚠️ **ISTRUZIONE:** Usa lo stesso stile banner unico (Rosso + Spacer in una tabella) delle categorie con padding aumentato a 25.
+**TITOLO TABELLA (STILE NERO SU BIANCO):**
+⚠️ **ISTRUZIONE:** Usa lo stesso stile (Nero su Bianco + Riga Rossa) delle categorie.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 25px; color: #ffffff;">
-      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 16px;"><b>TABELLA RIEPILOGATIVA</b></font><br>
-      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 13px;"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
+    <td bgcolor="#ffffff" style="background-color: #ffffff; padding: 25px;" align="left">
+      <font color="#000000" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #000000;">TABELLA RIEPILOGATIVA</font><br>
+      <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
   </tr>
   <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff; line-height: 1px; font-size: 1px;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; line-height: 1px; font-size: 1px;"><font color="#e51b20" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -554,6 +554,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
