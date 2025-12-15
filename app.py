@@ -344,7 +344,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO CON TABELLE PER COMPATIBILITÀ HUBSPOT) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: USO 'CELLPADDING' E '<BR>' PER HUBSPOT) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -423,9 +423,9 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE PER FORMATTAZIONE HUBSPOT/GMAIL:**
-Non usare DIV. Usa ESCLUSIVAMENTE una **TABELLA HTML** per creare il box del titolo.
+Non usare DIV. Usa ESCLUSIVAMENTE una **TABELLA HTML** con attributo `cellpadding` per creare lo spazio.
 Codice HTML OBBLIGATORIO per ogni categoria:
-`<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 25px; margin-bottom: 20px;"><tr><td style="background-color: #f8f9fa; border-left: 5px solid #ff4b4b; padding: 15px; font-family: sans-serif;"><strong style="display: block; font-size: 18px; color: #333; text-transform: uppercase; margin-bottom: 4px;">TITOLO CATEGORIA</strong><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
+`<table width="100%" cellpadding="15" cellspacing="0" border="0" style="margin-top: 25px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid #ff4b4b;"><tr><td style="font-family: sans-serif; color: #333;"><strong style="font-size: 18px; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -438,8 +438,8 @@ Le categorie sono:
 {location_guardrail_prompt}
 
 **FASE 3: TABELLA RIEPILOGATIVA**
-Usa ESATTAMENTE questo HTML (struttura a tabella) per il titolo:
-`<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 30px; margin-bottom: 20px;"><tr><td style="background-color: #f8f9fa; border-left: 5px solid #ff4b4b; padding: 15px; font-family: sans-serif;"><strong style="display: block; font-size: 18px; color: #333; text-transform: uppercase; margin-bottom: 4px;">TABELLA RIEPILOGATIVA</strong><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+Usa ESATTAMENTE questo HTML (struttura a tabella con cellpadding) per il titolo:
+`<table width="100%" cellpadding="15" cellspacing="0" border="0" style="margin-top: 30px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid #ff4b4b;"><tr><td style="font-family: sans-serif; color: #333;"><strong style="font-size: 18px; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
 **LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
 * Devi cercare nel database la colonna che contiene il link breve di HubSpot.
