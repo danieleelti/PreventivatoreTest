@@ -16,7 +16,7 @@ st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 # 100 underscore per forzare la larghezza a 600px
 spacer_text = "_" * 100 
 
-# --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT - NON ENTRA NELLA MAIL) ---
+# --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -41,7 +41,7 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* FORZATURA VISIVA STREAMLIT: Simula la visualizzazione 600px */
+    /* FORZATURA VISIVA STREAMLIT */
     div[data-testid="stChatMessage"] table {
         width: 600px !important; 
         min-width: 600px !important;
@@ -215,23 +215,20 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- GENERAZIONE AFORISMA (TEMP 1.2 = CREATIVITÀ ALTA) ---
+    # --- GENERAZIONE AFORISMA (TEMP 1.2) ---
     quote = ""
     try:
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
-            
             safety_quote = {
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
-            
             model_quote = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 1.2}) 
             prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
-            
             response_quote = model_quote.generate_content(prompt_quote, safety_settings=safety_quote)
             quote = response_quote.text.strip()
         else:
@@ -314,7 +311,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: NO CSS - SOLO HTML OLD SCHOOL) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: SFONDO GRIGIO + PIPE ROSSO) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -358,7 +355,7 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE: NO CSS - SOLO ATTRIBUTI HTML**
 Usa ESCLUSIVAMENTE questo HTML. 
-Struttura: Tabella Madre (600px) -> Cella Rossa | Cella Spazio | Cella Grigia (che contiene una seconda tabella per il padding).
+Struttura: Tabella Madre (600px) -> Cella Rossa (Pipe Rosso) | Cella Spazio (Grigio) | Cella Testo (Grigio con Tabella annidata).
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
