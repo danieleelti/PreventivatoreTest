@@ -252,15 +252,26 @@ if "messages" not in st.session_state or not st.session_state.messages:
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
+            
+            # --- Sblocco Safety Settings anche per la quote ---
+            safety_quote = {
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+            
             # Usa il modello Flash per massima velocità
             model_quote = genai.GenerativeModel("gemini-1.5-flash") 
             prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
-            response_quote = model_quote.generate_content(prompt_quote)
+            
+            response_quote = model_quote.generate_content(prompt_quote, safety_settings=safety_quote)
             quote = response_quote.text.strip()
         else:
             raise Exception("API Key non trovata")
-    except Exception:
-        # Fallback statico se API fallisce o lenta
+    except Exception as e:
+        print(f"Errore Aforisma: {e}") # Debug in console
+        # Fallback statico se API fallisce
         fallback_quotes = [
             "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
             "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
@@ -347,7 +358,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: MIN-WIDTH E SPACER) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA RIEPILOGATIVA ROBUSTA) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -441,33 +452,32 @@ Le categorie sono:
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (NO MARKDOWN - SOLO HTML)**
-NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili.
-Usa ESATTAMENTE questo codice per il titolo della tabella (`min-width` incluso):
+**FASE 3: TABELLA RIEPILOGATIVA (STRUTTURA HTML ROBUSTA)**
+NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border="0"`).
+
+**TITOLO TABELLA:**
 `<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**GENERAZIONE DATI (HTML PURO):**
-Genera il contenuto della tabella usando questo template HTML (Senza bordi, cellpadding per spaziatura, min-width 100%):
-`<table width="100%" border="0" cellspacing="0" cellpadding="8" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
+**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE):**
+`<table width="100%" border="0" cellspacing="0" cellpadding="10" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
-    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Nome Format</th>
-    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Costo Totale (+IVA)</th>
-    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Scheda Tecnica</th>
+    <th width="40%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Nome Format</th>
+    <th width="20%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Costo Totale (+IVA)</th>
+    <th width="40%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Scheda Tecnica</th>
   </tr>
   <tr>
-    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;"><strong>🍳 Cooking</strong></td>
-    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;">€ 2.400,00</td>
-    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;"><strong>🍳 Cooking</strong></td>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;">€ 2.400,00</td>
+    <td align="left" style="font-family: 'Tahoma', sans-serif; border-bottom: 1px solid #eeeeee;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
-</table>`
+</table><br><br>`
 
 **NOTE TECNICHE LINK HUBSPOT:**
 * Cerca link `https://eu1.hubs.ly` o `https://hubs.ly`.
-* Se manca, usa link alternativi.
 * Testo link = Nome file (es. `Cooking.pdf`).
 
-**FASE 4: INFO UTILI**
-Copia ESATTAMENTE questo blocco:
+**FASE 4: INFO UTILI (IMPORTANTE: SCRIVILE SEMPRE)**
+Assicurati di scrivere questo blocco ALLA FINE, dopo aver chiuso la tabella:
 
 ### Informazioni Utili
 
