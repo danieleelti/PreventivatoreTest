@@ -368,19 +368,21 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT BANNER ROSSO (MASSIMA COMPATIBILITÀ)**
-Usa ESCLUSIVAMENTE questo HTML. Il colore di sfondo è applicato SIA alla `table` CHE al `td` per sicurezza.
+⚠️ **IMPORTANTE: LAYOUT BANNER UNICO (2 RIGHE: TITOLO + SPACER)**
+Usa ESCLUSIVAMENTE questo HTML. 
+La riga rossa e la riga spacer SONO NELLA STESSA TABELLA per garantire la larghezza.
+Il colore bianco è forzato con `!important`.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px;" align="left">
-      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TITOLO CATEGORIA</font><br>
-      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">CLAIM</font>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px; color: #ffffff;">
+      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 16px; font-weight: bold;">TITOLO CATEGORIA</span><br>
+      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 13px; font-style: italic;">CLAIM</span>
     </td>
   </tr>
-</table>
-<table width="600" border="0" cellspacing="0" cellpadding="0">
-  <tr><td bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td></tr>
+  <tr>
+    <td bgcolor="#ffffff" style="background-color: #ffffff; line-height: 1px; font-size: 1px;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+  </tr>
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
@@ -402,25 +404,25 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **DIVIETO EMOJI:** NON usare emoji all'interno della tabella. Solo testo.
 ⚠️ **SELEZIONE LINK:** Devi estrarre il link SOLO dalla colonna chiamata esattamente "LinkHubSpot" del database. Se quella colonna è vuota, non mettere link.
 ⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il "Nome del Format" seguito da ".pdf" (es. "Csi Project.pdf").
-⚠️ **COLORE LINK:** Il link deve essere ROSSO (#e51b20). Usa il tag FONT dentro il tag A.
+⚠️ **COLORE LINK:** Usa `style="color: #e51b20; text-decoration: underline;"` per rendere il link visibile.
 ⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"`.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (BANNER ROSSO):**
-⚠️ **ISTRUZIONE:** Usa lo stesso stile banner rosso (doppio background color) delle categorie.
+**TITOLO TABELLA (BANNER UNICO):**
+⚠️ **ISTRUZIONE:** Usa lo stesso stile banner unico (Rosso + Spacer in una tabella) delle categorie.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px;" align="left">
-      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TABELLA RIEPILOGATIVA</font><br>
-      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</font>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px; color: #ffffff;">
+      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 16px; font-weight: bold;">TABELLA RIEPILOGATIVA</span><br>
+      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 13px; font-style: italic;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span>
     </td>
   </tr>
-</table>
-<table width="600" border="0" cellspacing="0" cellpadding="0">
-  <tr><td bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td></tr>
+  <tr>
+    <td bgcolor="#ffffff" style="background-color: #ffffff; line-height: 1px; font-size: 1px;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+  </tr>
 </table>`
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
@@ -554,6 +556,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
