@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: SPACER RIPRISTINATI NEI PUNTI STRATEGICI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA UNICA + SPACER FINALE) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -439,12 +439,14 @@ Le categorie sono:
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - 12 RIGHE DISTINTE)**
+**FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - UNICA TABELLA)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **LINK:** Cerca il link PDF nella colonna "Scheda Tecnica" o "Link" del database e inseriscilo in href.
+⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"`.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
+⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
@@ -467,7 +469,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   </tr>
 </table>`
 
-**CONTENUTO TABELLA (SEGUI QUESTO SCHEMA PER OGNI FORMAT):**
+**STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
 `<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
@@ -476,10 +478,11 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   </tr>
   
   <tr>
-    <td align="left"><strong>🍳 Cooking</strong></td>
-    <td align="left">€ 2.400,00</td>
-    <td align="left"><a href="LINK_REALE_DAL_DATABASE">Cooking.pdf</a></td>
+    <td align="left"><strong>🍳 Nome Format</strong></td>
+    <td align="left">€ Prezzo</td>
+    <td align="left"><a href="LINK_REALE_DAL_DATABASE">Link</a></td>
   </tr>
+  
   <tr>
     <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
