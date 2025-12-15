@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (Visualizzazione App) ---
+# --- CSS PERSONALIZZATO (RIPRISTINATO COMPLETO) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -344,7 +344,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (FIX DEFINITIVO PER HUBSPOT: TABLE LAYOUT FISICO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: BOLD FORMAT + FULL WIDTH TABLE) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -422,9 +422,9 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE PER HUBSPOT: NO CSS BORDERS, NO PADDING, SOLO CELLE**
-Usa ESCLUSIVAMENTE questo codice HTML "Table-Layout" per ogni titolo categoria. Copialo ESATTAMENTE con le 3 celle:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="15" bgcolor="#f8f9fa" style="width: 15px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
+⚠️ **IMPORTANTE PER HUBSPOT: NO CSS BORDERS, NO PADDING, SOLO CELLE E WIDTH 100%**
+Usa ESCLUSIVAMENTE questo codice HTML "Table-Layout" per ogni titolo categoria. Copialo ESATTAMENTE con le larghezze esplicite e align left:
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -432,13 +432,13 @@ Le categorie sono:
 3.  **VIBE & RELAX** (2 format) - Claim: "Atmosfera e condivisione"
 4.  **SOCIAL** (2 format) - Claim: "Impatto positivo"
 
-*Regole Format:* Inizia con un'emoji nel titolo (es. "### 🍳 Cooking"). Niente emoji nella descrizione.
+*Regole Format:* Usa il grassetto HTML per il titolo (es. "<strong>🍳 Cooking</strong>"). NON usare Markdown (### o **).
 
 {location_guardrail_prompt}
 
 **FASE 3: TABELLA RIEPILOGATIVA**
 Usa ESATTAMENTE questo HTML "Table-Layout" per il titolo della tabella:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 30px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="15" bgcolor="#f8f9fa" style="width: 15px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 30px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
 **LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
 * Devi cercare nel database la colonna che contiene il link breve di HubSpot.
