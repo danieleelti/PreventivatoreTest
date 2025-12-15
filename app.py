@@ -385,7 +385,7 @@ Copia ESATTAMENTE:
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
 ⚠️ **SPAZIATURA:** Usa un solo `<br>` alla fine della descrizione per spaziare i format.
-`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
+`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -554,6 +554,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
