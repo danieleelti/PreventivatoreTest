@@ -292,7 +292,6 @@ else:
 
 # --- 5. SYSTEM PROMPT (AGGIORNATO: NO IMG, 2 COLONNE 59+541, LINK SALVI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
-
 BASE_INSTRUCTIONS = f"""
 SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 {context_brief}
@@ -368,16 +367,15 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT BANNER UNICO (2 RIGHE: TITOLO + SPACER)**
+⚠️ **IMPORTANTE: LAYOUT BANNER UNICO (Cellpadding 25 + Font Bianco Forzato)**
 Usa ESCLUSIVAMENTE questo HTML. 
-La riga rossa e la riga spacer SONO NELLA STESSA TABELLA per garantire la larghezza.
-Il colore bianco è forzato con `!important`.
+Il colore del testo è forzato con `<font color="#ffffff">` direttamente attorno al testo per battere gli stili di HubSpot.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px; color: #ffffff;">
-      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 16px; font-weight: bold;">TITOLO CATEGORIA</span><br>
-      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 13px; font-style: italic;">CLAIM</span>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 25px; color: #ffffff;">
+      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 16px;"><b>TITOLO CATEGORIA</b></font><br>
+      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 13px;"><i>CLAIM</i></font>
     </td>
   </tr>
   <tr>
@@ -386,8 +384,8 @@ Copia ESATTAMENTE:
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-⚠️ **SPAZIATURA:** Usa `<br><br>` alla fine della descrizione per spaziare i format.
-`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
+⚠️ **SPAZIATURA:** Usa un solo `<br>` alla fine della descrizione per spaziare i format.
+`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -412,12 +410,12 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (BANNER UNICO):**
-⚠️ **ISTRUZIONE:** Usa lo stesso stile banner unico (Rosso + Spacer in una tabella) delle categorie.
+⚠️ **ISTRUZIONE:** Usa lo stesso stile banner unico (Rosso + Spacer in una tabella) delle categorie con padding aumentato a 25.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px; color: #ffffff;">
-      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 16px; font-weight: bold;">TABELLA RIEPILOGATIVA</span><br>
-      <span style="color: #ffffff !important; font-family: Tahoma, sans-serif; font-size: 13px; font-style: italic;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span>
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 25px; color: #ffffff;">
+      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 16px;"><b>TABELLA RIEPILOGATIVA</b></font><br>
+      <font color="#ffffff" face="Tahoma, sans-serif" style="color: #ffffff !important; font-size: 13px;"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
   </tr>
   <tr>
@@ -556,6 +554,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
