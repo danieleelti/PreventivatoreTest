@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA UNICA + SPACER FINALE) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: ALLINEAMENTO CENTRATO TABELLA E TITOLI IDENTICI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -449,6 +449,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
@@ -470,17 +471,18 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 </table>`
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
+⚠️ **ALLINEAMENTO:** Le colonne 2 e 3 DEVONO essere centrate (`align="center"`).
 `<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
-    <th width="120" align="left">Costo Totale (+IVA)</th>
-    <th width="240" align="left">Scheda Tecnica</th>
+    <th width="120" align="center">Costo Totale (+IVA)</th>
+    <th width="240" align="center">Scheda Tecnica</th>
   </tr>
   
   <tr>
     <td align="left"><strong>🍳 Nome Format</strong></td>
-    <td align="left">€ Prezzo</td>
-    <td align="left"><a href="LINK_REALE_DAL_DATABASE">Link</a></td>
+    <td align="center">€ Prezzo</td>
+    <td align="center"><a href="LINK_REALE_DAL_DATABASE">Link</a></td>
   </tr>
   
   <tr>
