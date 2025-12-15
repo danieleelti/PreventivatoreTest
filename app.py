@@ -368,25 +368,24 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT CON SFONDO (600px)**
-Usa ESCLUSIVAMENTE questo HTML. Tabella a una sola colonna con l'immagine red.png come sfondo.
+⚠️ **IMPORTANTE: LAYOUT BANNER ROSSO (SEMPLIFICATO)**
+Usa ESCLUSIVAMENTE questo HTML. Nessuna colonna laterale, nessuna immagine. Solo sfondo rosso e testo bianco.
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="15" bgcolor="#e51b20" style="width: 600px; background-color: #e51b20;">
   <tr>
-    <td width="600" valign="middle" bgcolor="#f8f9fa" background="https://www.teambuilding.it/red.png" style="width: 600px; background-color: #f8f9fa; background-image: url('https://www.teambuilding.it/red.png'); background-repeat: no-repeat; background-position: left top; padding: 20px;">
-      <strong>TITOLO CATEGORIA</strong><br>
-      <font color="#ffffff"><i>CLAIM</i></font>
+    <td align="left">
+      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TITOLO CATEGORIA</font><br>
+      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">CLAIM</font>
     </td>
   </tr>
-  <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
-  </tr>
+</table>
+<table width="600" border="0" cellspacing="0" cellpadding="0">
+  <tr><td bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td></tr>
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-⚠️ **ATTENZIONE:** NON inserire spazi o `<br>` tra la fine della tabella titolo e l'inizio del primo format. Devono essere attaccati.
 ⚠️ **SPAZIATURA:** Usa `<br><br>` alla fine della descrizione per spaziare i format.
-`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
+`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -410,18 +409,18 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (SFONDO):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (immagine di sfondo red.png).
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
+**TITOLO TABELLA (BANNER ROSSO):**
+⚠️ **ISTRUZIONE:** Usa lo stesso stile banner rosso delle categorie.
+`<br><table width="600" border="0" cellspacing="0" cellpadding="15" bgcolor="#e51b20" style="width: 600px; background-color: #e51b20;">
   <tr>
-    <td width="600" valign="middle" bgcolor="#f8f9fa" background="https://www.teambuilding.it/red.png" style="width: 600px; background-color: #f8f9fa; background-image: url('https://www.teambuilding.it/red.png'); background-repeat: no-repeat; background-position: left top; padding: 20px;">
-      <strong>TABELLA RIEPILOGATIVA</strong><br>
-      <font color="#ffffff"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
+    <td align="left">
+      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TABELLA RIEPILOGATIVA</font><br>
+      <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</font>
     </td>
   </tr>
-  <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
-  </tr>
+</table>
+<table width="600" border="0" cellspacing="0" cellpadding="0">
+  <tr><td bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td></tr>
 </table>`
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
@@ -555,6 +554,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
