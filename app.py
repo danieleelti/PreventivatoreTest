@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TRIPLA VERNICIATURA + LINK REALI + SPACER) ---
+# --- 5. SYSTEM PROMPT (MODIFICATO CON HTML ANNI 90, CELLPADDING 10 E COLONNA ROSSA INVISIBILE) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -403,8 +403,7 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
-La riga rossa contiene il pipe colorato. L'ultima riga contiene 100 underscore bianchi.
-Lo sfondo grigio è applicato 3 volte per sicurezza.
+La prima cella (TD width 5) è la COLONNA ROSSA. Al suo interno c'è una pipe (|) colorata di rosso (#ff4b4b) su sfondo rosso (#ff4b4b), quindi invisibile.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
@@ -444,8 +443,9 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **LINK:** Cerca il link PDF nella colonna "Scheda Tecnica" o "Link" del database e inseriscilo in href.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"`.
+⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 
-**TITOLO TABELLA (TRIPLA VERNICIATURA):**
+**TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
@@ -467,7 +467,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 </table>`
 
 **CONTENUTO TABELLA (SEGUI QUESTO SCHEMA PER OGNI FORMAT):**
-`<table width="600" border="0" cellspacing="0" cellpadding="8">
+`<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
     <th width="120" align="left">Costo Totale (+IVA)</th>
