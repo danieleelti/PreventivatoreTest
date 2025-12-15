@@ -12,15 +12,15 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (RIPRISTINATO COMPLETO) ---
+# --- CSS PERSONALIZZATO (TAHOMA) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
     div[data-testid="stChatMessage"] { background-color: #ffffff !important; border: 1px solid #f0f2f6; border-radius: 10px; padding: 15px; }
     
-    /* Font e Testi */
+    /* Font e Testi - FORZATO TAHOMA */
     div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] li, div[data-testid="stChatMessage"] div {
-        font-family: 'Calibri', 'Arial', sans-serif !important;
+        font-family: 'Tahoma', sans-serif !important;
         font-size: 15px !important;
         color: #000000 !important;
         line-height: 1.6 !important;
@@ -28,7 +28,7 @@ st.markdown("""
     
     /* TITOLI FORMAT (H3) */
     div[data-testid="stChatMessage"] h3 {
-        font-family: 'Calibri', 'Arial', sans-serif !important;
+        font-family: 'Tahoma', sans-serif !important;
         font-size: 17px !important;
         font-weight: 800 !important;
         color: #000000 !important;
@@ -48,7 +48,7 @@ st.markdown("""
         box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
     }
     .block-title {
-        font-family: 'Arial Black', sans-serif !important;
+        font-family: 'Tahoma', sans-serif !important;
         font-size: 18px !important;
         font-weight: 900 !important;
         text-transform: uppercase;
@@ -57,7 +57,7 @@ st.markdown("""
         margin-bottom: 4px;
     }
     .block-claim {
-        font-family: 'Arial', sans-serif !important;
+        font-family: 'Tahoma', sans-serif !important;
         font-size: 13px !important;
         font-style: italic !important;
         color: #666 !important;
@@ -71,6 +71,7 @@ st.markdown("""
         border: 1px solid #e0e0e0 !important;
         font-size: 14px !important;
         margin-top: 10px !important;
+        font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] th {
         background-color: #f1f3f4 !important;
@@ -79,10 +80,12 @@ st.markdown("""
         text-align: left;
         padding: 12px !important;
         border-bottom: 2px solid #ddd !important;
+        font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] td {
         padding: 10px !important;
         border-bottom: 1px solid #eee !important;
+        font-family: 'Tahoma', sans-serif !important;
     }
     
     /* Sidebar Button */
@@ -344,7 +347,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: BOLD FORMAT + FULL WIDTH TABLE) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: FIXED TABLE WIDTH CONFLICT) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -424,7 +427,7 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE PER HUBSPOT: NO CSS BORDERS, NO PADDING, SOLO CELLE E WIDTH 100%**
 Usa ESCLUSIVAMENTE questo codice HTML "Table-Layout" per ogni titolo categoria. Copialo ESATTAMENTE con le larghezze esplicite e align left:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -438,7 +441,7 @@ Le categorie sono:
 
 **FASE 3: TABELLA RIEPILOGATIVA**
 Usa ESATTAMENTE questo HTML "Table-Layout" per il titolo della tabella:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 30px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 30px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
 **LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
 * Devi cercare nel database la colonna che contiene il link breve di HubSpot.
