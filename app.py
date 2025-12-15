@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO ---
+# --- CSS PERSONALIZZATO (RIPRISTINATO COMPLETO) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -37,7 +37,7 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* BLOCCHI ROSSI (Titoli Categorie e Tabella) */
+    /* BLOCCHI ROSSI (Titoli Categorie e Tabella) - MANTENUTI PER SICUREZZA VISIVA */
     .block-header {
         background-color: #f8f9fa;
         border-left: 5px solid #ff4b4b;
@@ -297,7 +297,7 @@ with st.sidebar:
     with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
     citta_input = st.text_input("Città / Location", placeholder="Milano / Villa Reale", key="wdg_citta")
     
-    # --- MODIFICA RICHIESTA: SELECTBOX DURATA ---
+    # --- SELECTBOX DURATA ---
     durata_input = st.selectbox(
         "Durata Attività", 
         options=["<1h", "1-2h", "2-4h", ">4h"], 
@@ -344,7 +344,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (LOGICA LINK HUBSPOT AGGIORNATA) ---
+# --- 5. SYSTEM PROMPT (LOGICA LINK HUBSPOT AGGIORNATA + STILI INLINE PER GMAIL) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -417,12 +417,14 @@ Prendi le ultime due cifre del TOTALE_GREZZO:
 ### 🚦 ORDINE DI OUTPUT (OBBLIGATORIO)
 
 **FASE 1: INTRODUZIONE**
-Scrivi un paragrafo di 3-4 righe (testo normale). Saluta {cliente_input}, cita i dettagli del brief e usa un tono caldo e professionale.
+Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine per spaziatura). Saluta {cliente_input}, cita i dettagli del brief e usa un tono caldo e professionale.
 
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
-Per OGNI categoria, usa ESCLUSIVAMENTE questo HTML per il titolo:
-`<div class="block-header"><span class="block-title">TITOLO CATEGORIA</span><span class="block-claim">CLAIM</span></div>`
+
+⚠️ **IMPORTANTE PER FORMATTAZIONE MAIL:**
+Per OGNI categoria, usa ESCLUSIVAMENTE questo HTML con STILI INLINE (non usare classi CSS):
+`<div style="background-color: #f8f9fa; border-left: 5px solid #ff4b4b; padding: 15px; margin-top: 25px; margin-bottom: 20px; font-family: sans-serif;"><strong style="display: block; font-size: 18px; color: #333; text-transform: uppercase; margin-bottom: 4px;">TITOLO CATEGORIA</strong><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></div>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -435,8 +437,8 @@ Le categorie sono:
 {location_guardrail_prompt}
 
 **FASE 3: TABELLA RIEPILOGATIVA**
-Usa ESATTAMENTE questo HTML per il titolo (inserendo tutti i dati):
-`<div class="block-header"><span class="block-title">TABELLA RIEPILOGATIVA</span><span class="block-claim">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></div>`
+Usa ESATTAMENTE questo HTML con STILI INLINE per il titolo:
+`<div style="background-color: #f8f9fa; border-left: 5px solid #ff4b4b; padding: 15px; margin-top: 30px; margin-bottom: 20px; font-family: sans-serif;"><strong style="display: block; font-size: 18px; color: #333; text-transform: uppercase; margin-bottom: 4px;">TABELLA RIEPILOGATIVA</strong><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></div>`
 
 **LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
 * Devi cercare nel database la colonna che contiene il link breve di HubSpot.
@@ -558,5 +560,3 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
-
-
