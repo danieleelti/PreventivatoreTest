@@ -12,17 +12,17 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- GENERAZIONE SPACER CALIBRATO (100 caratteri) ---
-# Forza la larghezza minima a 600px su mobile/HubSpot
+# --- GENERAZIONE SPACER CALIBRATO ---
+# 100 underscore per forzare la larghezza a 600px
 spacer_text = "_" * 100 
 
-# --- CSS PERSONALIZZATO (Solo per anteprima Streamlit) ---
+# --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT - NON ENTRA NELLA MAIL) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
     div[data-testid="stChatMessage"] { background-color: #ffffff !important; border: 1px solid #f0f2f6; border-radius: 10px; padding: 15px; }
     
-    /* Font e Testi - FORZATO TAHOMA */
+    /* Font e Testi */
     div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] li, div[data-testid="stChatMessage"] div {
         font-family: 'Tahoma', sans-serif !important;
         font-size: 15px !important;
@@ -41,14 +41,13 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* FORZATURA TABELLE STREAMLIT: Bordi TRASPARENTI e larghezza fissa */
+    /* FORZATURA VISIVA STREAMLIT: Simula la visualizzazione 600px */
     div[data-testid="stChatMessage"] table {
         width: 600px !important; 
         min-width: 600px !important;
         max-width: 600px !important;
         border-collapse: collapse !important;
         border: 0px solid transparent !important;
-        outline: none !important;
         font-size: 14px !important;
         margin-top: 10px !important;
         font-family: 'Tahoma', sans-serif !important;
@@ -59,15 +58,12 @@ st.markdown("""
         font-weight: bold;
         text-align: left;
         padding: 12px !important;
-        border: 0px solid transparent !important;
-        outline: none !important;
+        border-bottom: 0px solid transparent !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] td {
-        padding: 0px !important; /* Reset padding per le tabelle annidate */
-        border: 0px solid transparent !important;
+        padding: 10px !important;
         border-bottom: 1px solid #f0f0f0 !important;
-        outline: none !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     
@@ -219,7 +215,7 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- GENERAZIONE AFORISMA (TEMP 1.2) ---
+    # --- GENERAZIONE AFORISMA (TEMP 1.2 = CREATIVITÀ ALTA) ---
     quote = ""
     try:
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
@@ -318,7 +314,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: MATRIOSKA DI TABELLE + SPACER BIANCHI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: NO CSS - SOLO HTML OLD SCHOOL) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -329,7 +325,7 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 1.  **USO DEL DATABASE:** Usa SOLO i dati caricati.
 2.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
 
-### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO - TEMP 0.0)
+### 🔢 CALCOLO PREVENTIVI (TEMP 0.0)
 
 **PASSO 1: IDENTIFICA LE VARIABILI**
 * **PAX:** {pax_input}
@@ -337,18 +333,18 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 * **METODO:** Metodo dal DB.
 
 **PASSO 2: DETERMINA I MOLTIPLICATORI (M)**
-* **M_PAX (Quantità):** <5: 3.20 | 5-10: 1.60 | 11-20: 1.05 | 21-30: 0.95 | 31-60: 0.90 | 61-90: 0.90 | 91-150: 0.85 | 151-250: 0.70 | 251-350: 0.63 | 351-500: 0.55 | 501-700: 0.50 | 701-900: 0.49 | >900: 0.30
-* **M_DURATA:** ≤1h: 1.05 | 1-2h: 1.07 | 2-4h: 1.10 | >4h: 1.15
-* **M_LINGUA:** ITA: 1.05 | ENG: 1.10
-* **M_LOCATION:** MI: 1.00 | RM: 0.95 | VE: 1.30 | Centro: 1.05 | Nord/Sud: 1.15 | Isole: 1.30
-* **M_STAGIONE:** Mag-Ott: 1.10 | Nov-Apr: 1.02
+* **M_PAX:** <5:3.2 | 5-10:1.6 | 11-20:1.05 | 21-30:0.95 | 31-60:0.90 | 61-90:0.90 | 91-150:0.85 | 151-250:0.70 | 251-350:0.63 | 351-500:0.55 | 501-700:0.50 | 701-900:0.49 | >900:0.30
+* **M_DURATA:** ≤1h:1.05 | 1-2h:1.07 | 2-4h:1.10 | >4h:1.15
+* **M_LINGUA:** ITA:1.05 | ENG:1.10
+* **M_LOCATION:** MI:1.00 | RM:0.95 | VE:1.30 | Centro:1.05 | Nord/Sud:1.15 | Isole:1.30
+* **M_STAGIONE:** Mag-Ott:1.10 | Nov-Apr:1.02
 
 **PASSO 3: FORMULA**
 🔴 **Standard:** `P_BASE * M_PAX * M_DURATA * M_LINGUA * M_LOCATION * M_STAGIONE * PAX`
-🔵 **Flat:** Pax<=20: 1800 | 21-40: 1800+((Pax-20)*35) | 41-60: 2500+((Pax-40)*50) | 61-100: 3500+((Pax-60)*37.5) | >100: 5000+((Pax-100)*13.5)
+🔵 **Flat:** Pax<=20:1800 | 21-40:1800+((Pax-20)*35) | 41-60:2500+((Pax-40)*50) | 61-100:3500+((Pax-60)*37.5) | >100:5000+((Pax-100)*13.5)
 
 **PASSO 4: ARROTONDAMENTO**
-Ultime due cifre 00-39 -> Difetto | 40-99 -> Eccesso. Minimo 1800.
+00-39 -> Difetto | 40-99 -> Eccesso. Minimo 1800.
 
 ---
 
@@ -360,30 +356,32 @@ Scrivi un paragrafo di saluti professionale di 3-4 righe.
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT MATRIOSKA (TABELLA ANNIDATA)**
-Usa ESCLUSIVAMENTE questo HTML. Nota che dentro la cella grigia c'è una SECONDA tabella per gestire il padding (15px).
+⚠️ **IMPORTANTE: NO CSS - SOLO ATTRIBUTI HTML**
+Usa ESCLUSIVAMENTE questo HTML. 
+Struttura: Tabella Madre (600px) -> Cella Rossa | Cella Spazio | Cella Grigia (che contiene una seconda tabella per il padding).
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important; margin-top: 20px; margin-bottom: 20px;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px; border: none !important;">|</td>
-    <td width="595" bgcolor="#f8f9fa" align="left" style="width: 595px; background-color: #f8f9fa; border: none !important;">
-      <table width="100%" border="0" cellspacing="0" cellpadding="15">
+    <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
+    <td width="10" bgcolor="#f8f9fa"></td>
+    <td width="585" bgcolor="#f8f9fa" align="left">
+      <table width="100%" border="0" cellspacing="0" cellpadding="10">
         <tr>
-          <td align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">
-            <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br>
-            <span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span>
+          <td align="left">
+            <strong>TITOLO CATEGORIA</strong><br>
+            <font color="#666666"><i>CLAIM</i></font>
           </td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="color: #ffffff; background-color: #ffffff; border: none !important; font-size: 1px; line-height: 1px;">{spacer_text}</td>
+    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-`<div style="font-family: 'Tahoma', sans-serif; margin-bottom: 15px;"><strong style="font-size: 15px;">EMOJI NOME FORMAT</strong><br><span style="font-size: 14px; color: #000;">Descrizione breve e accattivante del format che spiega l'attività.</span></div>`
+`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format.<br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format)
@@ -397,42 +395,43 @@ Le categorie sono:
 NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
 ⚠️ **CRITICO:** Una riga `<tr>` per ogni format.
 
-**TITOLO TABELLA (MATRIOSKA):**
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important; margin-top: 30px; margin-bottom: 10px;">
+**TITOLO TABELLA:**
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; color: #ff4b4b; font-size: 1px; line-height: 1px; border: none !important;">|</td>
-    <td width="595" bgcolor="#f8f9fa" align="left" style="width: 595px; background-color: #f8f9fa; border: none !important;">
-      <table width="100%" border="0" cellspacing="0" cellpadding="15">
+    <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
+    <td width="10" bgcolor="#f8f9fa"></td>
+    <td width="585" bgcolor="#f8f9fa" align="left">
+      <table width="100%" border="0" cellspacing="0" cellpadding="10">
         <tr>
-          <td align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">
-            <strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br>
-            <span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span>
+          <td align="left">
+            <strong>TABELLA RIEPILOGATIVA</strong><br>
+            <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input}</i></font>
           </td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="color: #ffffff; background-color: #ffffff; border: none !important; font-size: 1px; line-height: 1px;">{spacer_text}</td>
+    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
-**CONTENUTO TABELLA (COPIA ESATTO - CELLPADDING 10 - NO BORDER):**
-`<table width="600" border="0" cellspacing="0" cellpadding="10" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important;">
-  <tr style="background-color: #f1f3f4;">
-    <th width="240" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Nome Format</th>
-    <th width="120" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Costo Totale (+IVA)</th>
-    <th width="240" align="left" style="font-family: 'Tahoma', sans-serif; text-align: left; border: none !important;">Scheda Tecnica</th>
+**CONTENUTO TABELLA (COPIA ESATTO - CELLPADDING 8 - NO BORDER):**
+`<table width="600" border="0" cellspacing="0" cellpadding="8">
+  <tr bgcolor="#f1f3f4">
+    <th width="240" align="left">Nome Format</th>
+    <th width="120" align="left">Costo Totale (+IVA)</th>
+    <th width="240" align="left">Scheda Tecnica</th>
   </tr>
   
   <tr>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;"><strong>🍳 Cooking</strong></td>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;">€ 2.400,00</td>
-    <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
+    <td align="left"><strong>🍳 Cooking</strong></td>
+    <td align="left">€ 2.400,00</td>
+    <td align="left"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
 
   <tr>
-    <td colspan="3" style="color: #ffffff; background-color: #ffffff; border: none !important; font-size: 1px; line-height: 1px;">{spacer_text}</td>
+    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -440,7 +439,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
 Scrivi SEMPRE questo blocco dopo la tabella.
 
 <br><br>
-<strong style="font-family: 'Tahoma', sans-serif; font-size: 16px;">Informazioni Utili</strong><br><br>
+<strong>Informazioni Utili</strong><br><br>
 
 ✔️ **Tutti i format sono nostri** e possiamo personalizzarli senza alcun problema.<br>
 ✔️ **La location non è inclusa** ma possiamo aiutarti a trovare quella perfetta per il tuo evento.<br>
