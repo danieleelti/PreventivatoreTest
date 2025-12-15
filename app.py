@@ -368,12 +368,12 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT BANNER ROSSO (SEMPLIFICATO)**
-Usa ESCLUSIVAMENTE questo HTML. Nessuna colonna laterale, nessuna immagine. Solo sfondo rosso e testo bianco.
+⚠️ **IMPORTANTE: LAYOUT BANNER ROSSO (MASSIMA COMPATIBILITÀ)**
+Usa ESCLUSIVAMENTE questo HTML. Il colore di sfondo è applicato SIA alla `table` CHE al `td` per sicurezza.
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="15" bgcolor="#e51b20" style="width: 600px; background-color: #e51b20;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td align="left">
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px;" align="left">
       <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TITOLO CATEGORIA</font><br>
       <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">CLAIM</font>
     </td>
@@ -385,7 +385,7 @@ Copia ESATTAMENTE:
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
 ⚠️ **SPAZIATURA:** Usa `<br><br>` alla fine della descrizione per spaziare i format.
-`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
+`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -402,7 +402,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **DIVIETO EMOJI:** NON usare emoji all'interno della tabella. Solo testo.
 ⚠️ **SELEZIONE LINK:** Devi estrarre il link SOLO dalla colonna chiamata esattamente "LinkHubSpot" del database. Se quella colonna è vuota, non mettere link.
 ⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il "Nome del Format" seguito da ".pdf" (es. "Csi Project.pdf").
-⚠️ **COLORE LINK:** Usa `style="color: #e51b20; text-decoration: underline;"` per rendere il link visibile.
+⚠️ **COLORE LINK:** Il link deve essere ROSSO (#e51b20). Usa il tag FONT dentro il tag A.
 ⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"`.
@@ -410,10 +410,10 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (BANNER ROSSO):**
-⚠️ **ISTRUZIONE:** Usa lo stesso stile banner rosso delle categorie.
-`<br><table width="600" border="0" cellspacing="0" cellpadding="15" bgcolor="#e51b20" style="width: 600px; background-color: #e51b20;">
+⚠️ **ISTRUZIONE:** Usa lo stesso stile banner rosso (doppio background color) delle categorie.
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td align="left">
+    <td bgcolor="#e51b20" style="background-color: #e51b20; padding: 15px;" align="left">
       <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #ffffff;">TABELLA RIEPILOGATIVA</font><br>
       <font color="#ffffff" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #ffffff;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</font>
     </td>
@@ -425,7 +425,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
 ⚠️ **ALLINEAMENTO:** Le colonne 2 e 3 DEVONO essere centrate (`align="center"`).
-⚠️ **LINK:** Assicurati di usare il valore della colonna 'LinkHubSpot' per href e applica lo stile rosso.
+⚠️ **LINK:** Usa `<font color="#e51b20">` dentro `<a>` per forzare il colore rosso.
 `<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
@@ -436,7 +436,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   <tr>
     <td align="left"><strong>Nome Format</strong></td>
     <td align="center">€ Prezzo</td>
-    <td align="center"><a href="VALORE_COLONNA_LinkHubSpot" style="color: #e51b20; text-decoration: underline;">NomeFormat.pdf</a></td>
+    <td align="center"><a href="VALORE_COLONNA_LinkHubSpot" style="color: #e51b20; text-decoration: underline;"><font color="#e51b20">NomeFormat.pdf</font></a></td>
   </tr>
   
   <tr>
@@ -554,6 +554,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
