@@ -218,39 +218,7 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- GENERAZIONE AFORISMA CON GEMINI (TEMP 1.2) ---
-    quote = ""
-    try:
-        api_key_quote = st.secrets.get("GOOGLE_API_KEY")
-        if api_key_quote:
-            genai.configure(api_key=api_key_quote)
-            
-            safety_quote = {
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-            
-            # Temperatura alta per variare l'aforisma
-            model_quote = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 1.2}) 
-            prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
-            
-            response_quote = model_quote.generate_content(prompt_quote, safety_settings=safety_quote)
-            quote = response_quote.text.strip()
-        else:
-            raise Exception("API Key non trovata")
-    except Exception as e:
-        print(f"Errore Aforisma: {e}") 
-        fallback_quotes = [
-            "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
-            "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
-            "Non rimandare a domani quello che puoi far fare a uno stagista oggi.",
-            "Per aspera ad fattura."
-        ]
-        quote = random.choice(fallback_quotes)
-    
-    welcome_msg = f"Ciao **{st.session_state.username}**! 👋\n\n_{quote}_\n\nUsa la barra laterale a sinistra per compilare i dati."
+    welcome_msg = f"Ciao **{st.session_state.username}**! 👋\n\nUsa la barra laterale a sinistra per compilare i dati."
     st.session_state.messages.append({"role": "model", "content": welcome_msg})
 
 # --- SIDEBAR ---
@@ -594,6 +562,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
