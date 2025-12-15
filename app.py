@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- GENERAZIONE SPACER CALIBRATO (AUMENTATO A 125) ---
+# --- GENERAZIONE SPACER CALIBRATO (125) ---
 # 125 underscore bianchi per allargare la tabella riepilogativa
 spacer_text = "_" * 125 
 
@@ -69,7 +69,7 @@ st.markdown("""
     
     /* Sidebar Button */
     .stButton button {
-        background-color: #ff4b4b !important;
+        background-color: #e51b20 !important;
         color: white !important;
         font-weight: bold !important;
         border: none !important;
@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: LARGHEZZA IMG 59x98 E LINK HUBSPOT TASSATIVI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: BG #e51b20 + LINK LinkHubSpot + 0 SPAZI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -403,12 +403,12 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
-La prima cella (TD width 59) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMAGINE red.png con dimensioni forzate 59x98.
-⚠️ **FIX LARGHEZZA:** Usa `padding:0px`, `width:59px` e inserisci l'immagine `https://www.teambuilding.it/red.png`.
+La prima cella (TD width 59) è la COLONNA ROSSA.
+⚠️ **FIX SFONDO E SPAZI:** Usa `bgcolor="#e51b20"` e `style="background-color: #e51b20; padding: 0; margin: 0; line-height: 0; font-size: 0;"`.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="59" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 59px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0;"></td>
+    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -443,6 +443,7 @@ Le categorie sono:
 
 **FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - UNICA TABELLA)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
+⚠️ **DIVIETO EMOJI:** NON usare emoji all'interno della tabella. Solo testo.
 ⚠️ **SELEZIONE LINK:** Usa ESCLUSIVAMENTE il link presente nella colonna "LinkHubSpot" del database. NON USARE ALTRE COLONNE.
 ⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il "Nome del Format" seguito da ".pdf" (es. "Csi Project.pdf").
 ⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
@@ -452,10 +453,10 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png 59x98).
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png e sfondo #e51b20).
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="59" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 59px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0;"></td>
+    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -475,6 +476,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
 ⚠️ **ALLINEAMENTO:** Le colonne 2 e 3 DEVONO essere centrate (`align="center"`).
+⚠️ **LINK:** Assicurati di usare il valore della colonna 'LinkHubSpot' per href.
 `<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
@@ -483,9 +485,9 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   </tr>
   
   <tr>
-    <td align="left"><strong>🍳 Nome Format</strong></td>
+    <td align="left"><strong>Nome Format</strong></td>
     <td align="center">€ Prezzo</td>
-    <td align="center"><a href="LINK_DALLA_COLONNA_LinkHubSpot">NomeFormat.pdf</a></td>
+    <td align="center"><a href="VALORE_COLONNA_LinkHubSpot">NomeFormat.pdf</a></td>
   </tr>
   
   <tr>
