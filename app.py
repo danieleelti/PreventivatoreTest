@@ -13,24 +13,18 @@ import pytz
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
 # --- GENERAZIONE SPACER CALIBRATO ---
-# 100 underscore per forzare la larghezza a 600px
 spacer_text = "_" * 100 
 
 # --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
 <style>
-    /* Stile generale messaggi CHAT */
     div[data-testid="stChatMessage"] { background-color: #ffffff !important; border: 1px solid #f0f2f6; border-radius: 10px; padding: 15px; }
-    
-    /* Font e Testi */
     div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] li, div[data-testid="stChatMessage"] div {
         font-family: 'Tahoma', sans-serif !important;
         font-size: 15px !important;
         color: #000000 !important;
         line-height: 1.6 !important;
     }
-    
-    /* TITOLI FORMAT (H3) */
     div[data-testid="stChatMessage"] h3 {
         font-family: 'Tahoma', sans-serif !important;
         font-size: 17px !important;
@@ -40,8 +34,6 @@ st.markdown("""
         margin-bottom: 5px !important;
         text-transform: uppercase !important;
     }
-
-    /* FORZATURA VISIVA STREAMLIT */
     div[data-testid="stChatMessage"] table {
         width: 600px !important; 
         min-width: 600px !important;
@@ -66,8 +58,6 @@ st.markdown("""
         border-bottom: 1px solid #f0f0f0 !important;
         font-family: 'Tahoma', sans-serif !important;
     }
-    
-    /* Sidebar Button */
     .stButton button {
         background-color: #ff4b4b !important;
         color: white !important;
@@ -87,12 +77,11 @@ try:
 except ImportError:
     locations_module = None
 
-# --- IMPORTAZIONE MODULO HUBSPOT (TRACCIAMENTO) ---
+# --- IMPORTAZIONE MODULO HUBSPOT ---
 try:
     import hubspot
 except ImportError:
     hubspot = None
-# --------------------------------------------------
 
 # --- FUNZIONI DI UTILITÀ ---
 def enable_locations_callback():
@@ -109,7 +98,7 @@ def reset_preventivo():
     if "wdg_durata" in st.session_state:
         st.session_state["wdg_durata"] = "1-2h"
 
-# --- 2. GESTIONE DATABASE (GOOGLE SHEETS) ---
+# --- GESTIONE DATABASE ---
 def get_gspread_client():
     try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -119,11 +108,9 @@ def get_gspread_client():
                 creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
             creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
             return gspread.authorize(creds)
-        else:
-            st.error("⚠️ Chiave 'gcp_service_account' mancante in secrets.toml")
-            return None
+        return None
     except Exception as e:
-        st.error(f"Errore connessione Google: {e}")
+        st.error(f"Errore: {e}")
         return None
 
 @st.cache_data(ttl=600, show_spinner=False)
@@ -132,14 +119,13 @@ def carica_google_sheet(sheet_name):
     if not client: return None
     try:
         sheet = client.open(sheet_name).get_worksheet(0)
-        data = sheet.get_all_records()
-        return data
+        return sheet.get_all_records()
     except Exception as e:
-        st.error(f"Errore caricamento Sheet '{sheet_name}': {e}")
+        st.error(f"Errore caricamento: {e}")
         return None
 
 def database_to_string(database_list):
-    if not database_list: return "Nessun dato disponibile."
+    if not database_list: return "Nessun dato."
     try:
         if not isinstance(database_list[0], dict): return "" 
         sanitized_list = []
@@ -154,12 +140,10 @@ def database_to_string(database_list):
         header = " | ".join(sanitized_list[0].keys())
         rows = []
         for riga in sanitized_list:
-            clean_values = list(riga.values())
-            rows.append(" | ".join(clean_values))
+            rows.append(" | ".join(list(riga.values())))
         return header + "\n" + "\n".join(rows)
     except Exception: return ""
 
-# --- FUNZIONE DI SALVATAGGIO ---
 def salva_preventivo_su_db(cliente, utente, pax, data_evento, citta, contenuto):
     client = get_gspread_client()
     if not client: return False
@@ -167,151 +151,84 @@ def salva_preventivo_su_db(cliente, utente, pax, data_evento, citta, contenuto):
         sheet = client.open("PreventiviInviatiAi").get_worksheet(0)
         tz_ita = pytz.timezone('Europe/Rome')
         now = datetime.now(tz_ita)
-        data_oggi = now.strftime("%Y-%m-%d")
-        ora_oggi = now.strftime("%H:%M:%S")
-        row = [cliente, utente, data_oggi, ora_oggi, pax, data_evento, citta, contenuto]
+        row = [cliente, utente, now.strftime("%Y-%m-%d"), now.strftime("%H:%M:%S"), pax, data_evento, citta, contenuto]
         sheet.append_row(row)
         return True
     except Exception as e:
-        st.error(f"❌ Errore durante il salvataggio su Sheet: {e}")
+        st.error(f"Errore salvataggio: {e}")
         return False
 
-# --- CARICAMENTO DATI BASE ---
 master_database = carica_google_sheet('MasterTbGoogleAi') 
-if master_database is None:
-    st.error("⚠️ ERRORE CRITICO: Impossibile scaricare il database attività da Google Sheets.")
-    st.stop()
+if master_database is None: st.stop()
 csv_data_string = database_to_string(master_database)
 
-# --- 4. CONFIGURAZIONE LOGIN SICURO ---
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-if "username" not in st.session_state:
-    st.session_state.username = None
-
+# --- LOGIN ---
+if "authenticated" not in st.session_state: st.session_state.authenticated = False
 if not st.session_state.authenticated:
     c1, c2, c3 = st.columns([1,2,1])
     with c2:
         st.title("🔒 Area Riservata")
-        pwd = st.text_input("Inserisci Password Staff", type="password")
-        
+        pwd = st.text_input("Password", type="password")
         if st.button("Accedi"):
             users_db = st.secrets.get("passwords", {})
             if pwd in users_db:
                 st.session_state.authenticated = True
                 st.session_state.username = users_db[pwd]
-                st.session_state.messages = [] # Reset chat al login
                 st.rerun()
-            else:
-                st.error("Password errata")
+            else: st.error("Password errata")
     st.stop()
 
-# --- 4.b INIZIALIZZAZIONE SESSION STATE ---
-if "enable_locations_state" not in st.session_state:
-    st.session_state.enable_locations_state = False 
-if "retry_trigger" not in st.session_state:
-    st.session_state.retry_trigger = False
+# --- STATE ---
+if "enable_locations_state" not in st.session_state: st.session_state.enable_locations_state = False
+if "retry_trigger" not in st.session_state: st.session_state.retry_trigger = False
+if "messages" not in st.session_state: st.session_state.messages = []
 
-if "messages" not in st.session_state or not st.session_state.messages:
-    st.session_state.messages = []
-    
-    # --- GENERAZIONE AFORISMA (TEMP 1.2) ---
-    quote = ""
+# --- AFORISMA ---
+if not st.session_state.messages:
+    quote = "Per aspera ad fattura."
     try:
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
-            safety_quote = {
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-            model_quote = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 1.2}) 
-            prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
-            response_quote = model_quote.generate_content(prompt_quote, safety_settings=safety_quote)
-            quote = response_quote.text.strip()
-        else:
-            raise Exception("API Key non trovata")
-    except Exception as e:
-        print(f"Errore Aforisma: {e}") 
-        fallback_quotes = [
-            "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
-            "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
-            "Non rimandare a domani quello che puoi far fare a uno stagista oggi.",
-            "Per aspera ad fattura."
-        ]
-        quote = random.choice(fallback_quotes)
-    
-    welcome_msg = f"Ciao **{st.session_state.username}**! 👋\n\n_{quote}_\n\nUsa la barra laterale a sinistra per compilare i dati."
-    st.session_state.messages.append({"role": "model", "content": welcome_msg})
+            model_quote = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 1.2})
+            resp = model_quote.generate_content("Genera un aforisma breve, ironico e cinico sul lavoro. Stile Murphy/Dilbert. Solo l'aforisma.")
+            quote = resp.text.strip()
+    except: pass
+    st.session_state.messages.append({"role": "model", "content": f"Ciao **{st.session_state.username}**! 👋\n\n_{quote}_\n\nUsa la barra laterale per iniziare."})
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("TEST") # Titolo modificato
-    st.caption(f"Utente: **{st.session_state.username}**") 
+    st.title("TEST")
+    st.caption(f"Utente: **{st.session_state.username}**")
     st.markdown("---")
-    
-    st.subheader("📝 Dati Brief")
-    
-    if len(st.session_state.messages) > 1:
-        if st.button("🔄 NUOVO PREVENTIVO", type="secondary"):
-            reset_preventivo()
-            st.rerun()
-        st.markdown("---")
-
-    cliente_input = st.text_input("Nome Cliente *", placeholder="es. Azienda Rossi SpA", key="wdg_cliente")
-    email_tracking_input = st.text_input("📧 Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
-    
-    col_pax, col_data = st.columns(2)
-    with col_pax: pax_input = st.text_input("N. Pax", placeholder="50", key="wdg_pax")
-    with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
-    citta_input = st.text_input("Città / Location", placeholder="Milano / Villa Reale", key="wdg_citta")
-    
-    durata_input = st.selectbox(
-        "Durata Attività", 
-        options=["<1h", "1-2h", "2-4h", ">4h"], 
-        index=1,
-        key="wdg_durata"
-    )
-
-    obiettivo_input = st.text_area("Obiettivo / Mood / Note", placeholder="Descrivi l'obiettivo...", height=100, key="wdg_obiettivo")
-
+    if len(st.session_state.messages) > 1 and st.button("🔄 NUOVO PREVENTIVO", type="secondary"):
+        reset_preventivo()
+        st.rerun()
+    st.markdown("---")
+    cliente_input = st.text_input("Nome Cliente *", key="wdg_cliente")
+    email_tracking_input = st.text_input("📧 Email Tracking", key="wdg_email_track")
+    c1, c2 = st.columns(2)
+    pax_input = c1.text_input("N. Pax", key="wdg_pax")
+    data_evento_input = c2.text_input("Data", key="wdg_data")
+    citta_input = st.text_input("Città / Location", key="wdg_citta")
+    durata_input = st.selectbox("Durata", ["<1h", "1-2h", "2-4h", ">4h"], index=1, key="wdg_durata")
+    obiettivo_input = st.text_area("Note / Obiettivo", key="wdg_obiettivo")
     st.markdown("###")
     generate_btn = st.button("🚀 GENERA PREVENTIVO", type="primary")
     st.markdown("---")
-
-    with st.expander("⚙️ Impostazioni Avanzate", expanded=False):
-        use_location_db = st.checkbox("🏰 Abilita Database Location", key="enable_locations_state")
-        st.markdown("---")
-        model_options = ["gemini-3-pro-preview", "gemini-2.0-flash-exp", "gemini-1.5-pro-latest", "gemini-1.5-flash"]
-        if "gemini-3-pro-preview" not in model_options: model_options.insert(0, "gemini-3-pro-preview")
-        selected_model_name = st.selectbox("Modello Google", model_options)
-        
+    with st.expander("⚙️ Avanzate"):
+        use_location_db = st.checkbox("🏰 Abilita Location", key="enable_locations_state")
         api_key = st.secrets.get("GOOGLE_API_KEY")
-        if not api_key: st.error("⚠️ Manca GOOGLE_API_KEY in secrets.toml")
 
-# --- GESTIONE LOGICA LOCATION ---
-location_instructions_block = ""
-location_guardrail_prompt = ""
-
+# --- LOGICA LOCATION ---
+location_guardrail_prompt = "NON SCRIVERE NULLA SU LOCATION. PASSA DIRETTAMENTE ALLA TABELLA."
 if use_location_db:
     with st.spinner("Caricamento Location..."):
         location_database = carica_google_sheet('LocationGoogleAi')
         if location_database and locations_module:
-            loc_db_string = database_to_string(location_database)
-            location_instructions_block = locations_module.get_location_instructions(loc_db_string)
-            location_guardrail_prompt = f"SUGGERIMENTO LOCATION:\n{location_instructions_block}"
-        elif not location_database:
-            st.sidebar.warning("⚠️ Errore caricamento Location")
-else:
-    location_guardrail_prompt = """
-    ISTRUZIONE TASSATIVA LOCATION: IL DATABASE LOCATION È SPENTO.
-    NON SCRIVERE NULLA SU LOCATION.
-    PASSA DIRETTAMENTE ALLA TABELLA.
-    """
+            location_guardrail_prompt = f"SUGGERIMENTO LOCATION:\n{locations_module.get_location_instructions(database_to_string(location_database))}"
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: SFONDO GRIGIO + PIPE ROSSO) ---
+# --- SYSTEM PROMPT (AGGIORNATO: TRIPLA VERNICIATURA DI SFONDO) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -320,51 +237,34 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 
 ### 🛡️ PROTOCOLLO
 1.  **USO DEL DATABASE:** Usa SOLO i dati caricati.
-2.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
+2.  **DIVIETO:** VIETATO SCRIVERE "SU RICHIESTA".
 
-### 🔢 CALCOLO PREVENTIVI (TEMP 0.0)
-
-**PASSO 1: IDENTIFICA LE VARIABILI**
-* **PAX:** {pax_input}
-* **P_BASE:** Prezzo dal DB.
-* **METODO:** Metodo dal DB.
-
-**PASSO 2: DETERMINA I MOLTIPLICATORI (M)**
-* **M_PAX:** <5:3.2 | 5-10:1.6 | 11-20:1.05 | 21-30:0.95 | 31-60:0.90 | 61-90:0.90 | 91-150:0.85 | 151-250:0.70 | 251-350:0.63 | 351-500:0.55 | 501-700:0.50 | 701-900:0.49 | >900:0.30
-* **M_DURATA:** ≤1h:1.05 | 1-2h:1.07 | 2-4h:1.10 | >4h:1.15
-* **M_LINGUA:** ITA:1.05 | ENG:1.10
-* **M_LOCATION:** MI:1.00 | RM:0.95 | VE:1.30 | Centro:1.05 | Nord/Sud:1.15 | Isole:1.30
-* **M_STAGIONE:** Mag-Ott:1.10 | Nov-Apr:1.02
-
-**PASSO 3: FORMULA**
-🔴 **Standard:** `P_BASE * M_PAX * M_DURATA * M_LINGUA * M_LOCATION * M_STAGIONE * PAX`
-🔵 **Flat:** Pax<=20:1800 | 21-40:1800+((Pax-20)*35) | 41-60:2500+((Pax-40)*50) | 61-100:3500+((Pax-60)*37.5) | >100:5000+((Pax-100)*13.5)
-
-**PASSO 4: ARROTONDAMENTO**
-00-39 -> Difetto | 40-99 -> Eccesso. Minimo 1800.
+### 🔢 CALCOLO (TEMP 0.0)
+* **PAX:** {pax_input} | **P_BASE:** DB | **METODO:** DB
+* **MOLTIPLICATORI:** <5:3.2|5-10:1.6|11-20:1.05|21-30:0.95|31-60:0.90|61-90:0.90|91-150:0.85|151-250:0.70|251-350:0.63|351-500:0.55|>500:0.50
+* **DURATA:** ≤1h:1.05|1-2h:1.07|2-4h:1.10|>4h:1.15 | **LINGUA:** ITA:1.05|ENG:1.10 | **LOCATION:** MI:1.00|RM:0.95|VE:1.30|Centro:1.05|Nord/Sud:1.15
+* **FORMULA:** Std: `P_BASE*M_PAX*M_DURATA*...*PAX` | Flat: Scaglioni fissi.
+* **ARROTONDAMENTO:** 00-39->Difetto | 40-99->Eccesso. Min 1800.
 
 ---
 
-### 🚦 ORDINE DI OUTPUT (OBBLIGATORIO)
+### 🚦 OUTPUT (OBBLIGATORIO: HTML PURO)
 
-**FASE 1: INTRODUZIONE**
-Scrivi un paragrafo di saluti professionale di 3-4 righe.
+**FASE 1: INTRODUZIONE** (3-4 righe saluti).
 
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
-Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
+12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: NO CSS - SOLO ATTRIBUTI HTML**
-Usa ESCLUSIVAMENTE questo HTML. 
-Struttura: Tabella Madre (600px) -> Cella Rossa (Pipe Rosso) | Cella Spazio (Grigio) | Cella Testo (Grigio con Tabella annidata).
-Copia ESATTAMENTE:
+⚠️ **LAYOUT: TRIPLA VERNICIATURA (TD + TABLE + TD)**
+Usa ESATTAMENTE questo HTML. Nota come il colore `#f8f9fa` è ripetuto 3 volte per forzare lo sfondo.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
     <td width="10" bgcolor="#f8f9fa"></td>
     <td width="585" bgcolor="#f8f9fa" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10">
+      <table width="100%" border="0" cellspacing="0" cellpadding="15" bgcolor="#f8f9fa">
         <tr>
-          <td align="left">
+          <td align="left" bgcolor="#f8f9fa">
             <strong>TITOLO CATEGORIA</strong><br>
             <font color="#666666"><i>CLAIM</i></font>
           </td>
@@ -377,30 +277,25 @@ Copia ESATTAMENTE:
   </tr>
 </table>`
 
-2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format.<br>`
+**FORMAT ITEMS:**
+`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione...<br>`
 
-Le categorie sono:
-1.  **I BEST SELLER** (4 format)
-2.  **LE NOVITÀ** (4 format)
-3.  **VIBE & RELAX** (2 format)
-4.  **SOCIAL** (2 format)
+Categorie: **I BEST SELLER**, **LE NOVITÀ**, **VIBE & RELAX**, **SOCIAL**.
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (12 RIGHE)**
-NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
-⚠️ **CRITICO:** Una riga `<tr>` per ogni format.
+**FASE 3: TABELLA RIEPILOGATIVA**
+Una riga `<tr>` per ogni format.
 
-**TITOLO TABELLA:**
+**TITOLO (TRIPLA VERNICIATURA):**
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
     <td width="10" bgcolor="#f8f9fa"></td>
     <td width="585" bgcolor="#f8f9fa" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10">
+      <table width="100%" border="0" cellspacing="0" cellpadding="15" bgcolor="#f8f9fa">
         <tr>
-          <td align="left">
+          <td align="left" bgcolor="#f8f9fa">
             <strong>TABELLA RIEPILOGATIVA</strong><br>
             <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input}</i></font>
           </td>
@@ -413,124 +308,63 @@ NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
   </tr>
 </table>`
 
-**CONTENUTO TABELLA (COPIA ESATTO - CELLPADDING 8 - NO BORDER):**
+**CONTENUTO (COPIA ESATTO - CELLPADDING 8 - NO BORDER):**
 `<table width="600" border="0" cellspacing="0" cellpadding="8">
   <tr bgcolor="#f1f3f4">
     <th width="240" align="left">Nome Format</th>
     <th width="120" align="left">Costo Totale (+IVA)</th>
     <th width="240" align="left">Scheda Tecnica</th>
   </tr>
-  
   <tr>
     <td align="left"><strong>🍳 Cooking</strong></td>
     <td align="left">€ 2.400,00</td>
     <td align="left"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
-
   <tr>
     <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
-**FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco dopo la tabella.
-
-<br><br>
-<strong>Informazioni Utili</strong><br><br>
-
-✔️ **Tutti i format sono nostri** e possiamo personalizzarli senza alcun problema.<br>
-✔️ **La location non è inclusa** ma possiamo aiutarti a trovare quella perfetta per il tuo evento.<br>
-✔️ **Le attività di base** sono pensate per farvi stare insieme e divertirvi, ma il team building è anche formazione.<br>
-✔️ **Prezzo all inclusive:** spese staff, trasferta e tutti i materiali sono inclusi, nessun costo a consuntivo.<br>
-✔️ **Assicurazione pioggia:** Se avete scelto un format oudoor ma le previsioni meteo sono avverse, due giorni prima dell'evento sceglieremo insieme un format indoor allo stesso costo.<br>
-✔️ **Chiedici anche** servizio video/foto e gadget.
+**FASE 4: INFO UTILI**
+`<br><br><strong>Informazioni Utili</strong><br><br>... (tua lista)`
 """
 
 FULL_SYSTEM_PROMPT = f"{BASE_INSTRUCTIONS}\n\n### 💾 [DATABASE FORMATI]\n\n{csv_data_string}"
 
-# --- 6. GESTIONE INPUT ---
-prompt_to_process = None
-
-if st.session_state.retry_trigger:
-    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
-        prompt_to_process = st.session_state.messages[-1]["content"]
-    st.session_state.retry_trigger = False 
-
+# --- APP LOGIC ---
 if generate_btn:
-    if not cliente_input:
-        st.sidebar.error("⚠️ ERRORE: Inserisci il Nome Cliente per procedere!")
-        st.stop()
-    
-    prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_input}. Obiettivo: {obiettivo_input}."
-    
-    st.session_state.messages.append({"role": "user", "content": prompt_to_process})
+    if not cliente_input: st.error("Inserisci Cliente"); st.stop()
+    prompt = f"Ciao, sono {cliente_input}. Preventivo per {pax_input} pax, {data_evento_input}, {citta_input}. Durata: {durata_input}. Obiettivo: {obiettivo_input}."
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-chat_input = st.chat_input("Chiedi una modifica...")
-if chat_input: prompt_to_process = chat_input
+chat_input = st.chat_input("Modifica...")
+if chat_input: 
+    prompt = chat_input
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-# --- 7. RENDERING CHAT ---
-st.title("TEST") # Titolo Main
-for message in st.session_state.messages:
-    role_to_show = "assistant" if message["role"] == "model" else message["role"]
-    with st.chat_message(role_to_show): st.markdown(message["content"], unsafe_allow_html=True)
+# --- RENDER CHAT ---
+for m in st.session_state.messages:
+    role = "assistant" if m["role"] == "model" else m["role"]
+    with st.chat_message(role): st.markdown(m["content"], unsafe_allow_html=True)
 
-# --- 8. ELABORAZIONE AI (SOLO GEMINI) ---
-if prompt_to_process:
-    if not st.session_state.messages or st.session_state.messages[-1]["content"] != prompt_to_process:
-        st.session_state.messages.append({"role": "user", "content": prompt_to_process})
-    
-    if chat_input:
-       with st.chat_message("user"): st.markdown(prompt_to_process)
+# --- GENERATE RESPONSE ---
+if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+    with st.chat_message("assistant"):
+        with st.spinner("Elaborazione..."):
+            try:
+                genai.configure(api_key=api_key)
+                model = genai.GenerativeModel("gemini-3-pro-preview", generation_config={"temperature": 0.0}, system_instruction=FULL_SYSTEM_PROMPT)
+                history = [{"role": m["role"], "parts": [m["content"]]} for m in st.session_state.messages]
+                response = model.generate_content(history)
+                resp_text = response.text
+                if hubspot and email_tracking_input:
+                    resp_text = hubspot.inject_tracking_to_text(resp_text, email_tracking_input)
+                st.markdown(resp_text, unsafe_allow_html=True)
+                st.session_state.messages.append({"role": "model", "content": resp_text})
+            except Exception as e: st.error(f"Errore: {e}")
 
-    keywords_location = ["location", "dove", "villa", "castello", "spazio", "hotel", "tenuta", "cascina", "posto"]
-    is_location_request = any(k in prompt_to_process.lower() for k in keywords_location)
-    
-    should_generate = True
-    if is_location_request and not st.session_state.enable_locations_state:
-        should_generate = False
-        with st.chat_message("assistant"):
-            st.warning("⚠️ **Il Database Location è spento.**")
-            st.button("🟢 ATTIVA DATABASE LOCATION", on_click=enable_locations_callback)
-
-    if should_generate:
-        with st.chat_message("assistant"):
-            with st.spinner("Elaborazione con Google Gemini..."):
-                try:
-                    if not api_key: st.error("Chiave API mancante."); st.stop()
-                    
-                    response_text = ""
-
-                    genai.configure(api_key=api_key)
-                    # QUI USIAMO TEMP 0.0 PER IL PREVENTIVO (RIGORE ASSOLUTO)
-                    model = genai.GenerativeModel(model_name=selected_model_name, generation_config={"temperature": 0.0}, system_instruction=FULL_SYSTEM_PROMPT, safety_settings={HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE, HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE, HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE, HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
-                    
-                    history_gemini = []
-                    for m in st.session_state.messages:
-                        if m["role"] != "model": history_gemini.append({"role": "user", "parts": [m["content"]]})
-                        else: history_gemini.append({"role": "model", "parts": [m["content"]]})
-                    
-                    chat = model.start_chat(history=history_gemini[:-1])
-                    response = chat.send_message(prompt_to_process)
-                    
-                    # --- MODIFICA HUBSPOT ---
-                    response_text_raw = response.text
-                    if hubspot and email_tracking_input:
-                          response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
-                    else:
-                          response_text = response_text_raw
-
-                    st.markdown(response_text, unsafe_allow_html=True) 
-                    st.session_state.messages.append({"role": "model", "content": response_text})
-                    
-                except Exception as e:
-                    st.error(f"Errore: {e}")
-
-# --- PULSANTE SALVATAGGIO ---
+# --- SAVE BUTTON ---
 if st.session_state.messages and st.session_state.messages[-1]["role"] == "model":
-    last_response = st.session_state.messages[-1]["content"]
-    st.divider()
-    if st.button("💾 SALVA SU GOOGLE SHEET", use_container_width=True):
-        if salva_preventivo_su_db(cliente_input, st.session_state.username, pax_input, data_evento_input, citta_input, last_response):
-            st.success(f"✅ Preventivo per {cliente_input} salvato!")
-        else:
-            st.error("Errore salvataggio.")
+    if st.button("💾 SALVA"):
+        if salva_preventivo_su_db(cliente_input, st.session_state.username, pax_input, data_evento_input, citta_input, st.session_state.messages[-1]["content"]):
+            st.success("Salvato!")
