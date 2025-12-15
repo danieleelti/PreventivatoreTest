@@ -318,7 +318,11 @@ else:
     """
 
 # --- 5. SYSTEM PROMPT (LOGICA LINK HUBSPOT AGGIORNATA) ---
-context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
+
+# Gestione Default Durata (MODIFICA 1: Default 2-4h se vuoto)
+durata_effettiva = durata_input if durata_input and durata_input.strip() else "2-4 ore"
+
+context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_effettiva}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
 SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
@@ -328,10 +332,11 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
 2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
 3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
+4.  **RIGORE:** DEVI SEMPRE APPLICARE IL CALCOLO MATEMATICO DEFINITO SOTTO PER OGNI SINGOLO FORMAT. NON INVENTARE PREZZI.
 
-### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO)
+### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO E OBBLIGATORIO)
 
-Per calcolare il prezzo, segui questi passaggi logici:
+Per calcolare il prezzo, segui TASSATIVAMENTE questi passaggi logici senza saltarne nessuno:
 
 **PASSO 1: IDENTIFICA LE VARIABILI**
 * **PAX:** Numero partecipanti richiesto dall'utente ({pax_input}).
@@ -357,7 +362,7 @@ Usa sempre questa tabella per calcolare i coefficienti:
     * > 900 pax: **0.30**
 
 * **ALTRI MOLTIPLICATORI (Default = 1.00 se non specificato):**
-    * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) | >4h (1.15)
+    * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) [DEFAULT SE NON SPECIFICATO] | >4h (1.15)
     * **M_LINGUA:** Italiano (1.05) | Inglese (1.10)
     * **M_LOCATION:** Milano (1.00) | Roma (0.95) | Centro (1.05) | Nord/Sud (1.15) | Isole (1.30)
     * **M_STAGIONE:** Mag-Ott (1.10) | Nov-Apr (1.02)
@@ -455,7 +460,8 @@ if generate_btn:
         st.sidebar.error("⚠️ ERRORE: Inserisci il Nome Cliente per procedere!")
         st.stop()
     
-    prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_input}. Obiettivo: {obiettivo_input}."
+    # MODIFICA 1b: Uso durata_effettiva nel prompt utente
+    prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_effettiva}. Obiettivo: {obiettivo_input}."
     
     # Aggiungi messaggio utente alla chat e alla history
     st.session_state.messages.append({"role": "user", "content": prompt_to_process})
@@ -510,10 +516,10 @@ if prompt_to_process:
                     # --- MODIFICA HUBSPOT: ESPANSIONE LINK CORTO E TRACCIAMENTO ---
                     response_text_raw = response.text
                     if hubspot and email_tracking_input:
-                         # Chiama la versione 4.0 di hubspot.py che gestisce hubs.ly + requests
-                         response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
+                          # Chiama la versione 4.0 di hubspot.py che gestisce hubs.ly + requests
+                          response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
                     else:
-                         response_text = response_text_raw
+                          response_text = response_text_raw
                     # --------------------------------------------------------------
 
                     st.markdown(response_text, unsafe_allow_html=True) 
