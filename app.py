@@ -13,10 +13,10 @@ import pytz
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
 # --- GENERAZIONE SPACER CALIBRATO ---
-# 100 underscore per forzare la larghezza a 600px senza rompere il layout su mobile
+# 100 underscore bianchi per forzare la larghezza su HubSpot mobile/desktop
 spacer_text = "_" * 100 
 
-# --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT - NON ENTRA NELLA MAIL) ---
+# --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -41,7 +41,7 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* FORZATURA VISIVA STREAMLIT: Simula la visualizzazione 600px */
+    /* FORZATURA VISIVA STREAMLIT */
     div[data-testid="stChatMessage"] table {
         width: 600px !important; 
         min-width: 600px !important;
@@ -219,7 +219,7 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- GENERAZIONE AFORISMA (TEMP 1.2 = CREATIVITÀ ALTA) ---
+    # --- GENERAZIONE AFORISMA CON GEMINI (TEMP 1.2) ---
     quote = ""
     try:
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
@@ -233,6 +233,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
             
+            # Temperatura alta per variare l'aforisma
             model_quote = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 1.2}) 
             prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
             
@@ -261,12 +262,14 @@ with st.sidebar:
     
     st.subheader("📝 Dati Brief")
     
+    # PULSANTE NUOVO PREVENTIVO
     if len(st.session_state.messages) > 1:
         if st.button("🔄 NUOVO PREVENTIVO", type="secondary"):
             reset_preventivo()
             st.rerun()
         st.markdown("---")
 
+    # WIDGET INPUT
     cliente_input = st.text_input("Nome Cliente *", placeholder="es. Azienda Rossi SpA", key="wdg_cliente")
     email_tracking_input = st.text_input("📧 Email Referente (per tracking)", placeholder="email@cliente.it", key="wdg_email_track")
     
@@ -275,6 +278,7 @@ with st.sidebar:
     with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
     citta_input = st.text_input("Città / Location", placeholder="Milano / Villa Reale", key="wdg_citta")
     
+    # --- SELECTBOX DURATA ---
     durata_input = st.selectbox(
         "Durata Attività", 
         options=["<1h", "1-2h", "2-4h", ">4h"], 
@@ -291,6 +295,7 @@ with st.sidebar:
     with st.expander("⚙️ Impostazioni Avanzate", expanded=False):
         use_location_db = st.checkbox("🏰 Abilita Database Location", key="enable_locations_state")
         st.markdown("---")
+        # --- GEMINI ONLY ---
         model_options = ["gemini-3-pro-preview", "gemini-2.0-flash-exp", "gemini-1.5-pro-latest", "gemini-1.5-flash"]
         if "gemini-3-pro-preview" not in model_options: model_options.insert(0, "gemini-3-pro-preview")
         selected_model_name = st.selectbox("Modello Google", model_options)
@@ -318,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TRIPLA VERNICIATURA SFONDO GRIGIO + PIPE ROSSO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TRIPLA VERNICIATURA + LINK REALI + SPACER) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -326,52 +331,89 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 {context_brief}
 
 ### 🛡️ PROTOCOLLO
-1.  **USO DEL DATABASE:** Usa SOLO i dati caricati.
-2.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
+1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
+2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
+3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
 
-### 🔢 CALCOLO PREVENTIVI (TEMP 0.0)
+### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO - TEMP 0.0)
+
+Per calcolare il prezzo, segui questi passaggi logici:
 
 **PASSO 1: IDENTIFICA LE VARIABILI**
-* **PAX:** {pax_input}
-* **P_BASE:** Prezzo dal DB.
-* **METODO:** Metodo dal DB.
+* **PAX:** Numero partecipanti richiesto dall'utente ({pax_input}).
+* **P_BASE:** Leggi il valore nella colonna "Prezzo" del database (pulisci da simboli €/.).
+* **METODO:** Leggi la colonna "Metodo" del database.
 
 **PASSO 2: DETERMINA I MOLTIPLICATORI (M)**
-* **M_PAX:** <5:3.2 | 5-10:1.6 | 11-20:1.05 | 21-30:0.95 | 31-60:0.90 | 61-90:0.90 | 91-150:0.85 | 151-250:0.70 | 251-350:0.63 | 351-500:0.55 | 501-700:0.50 | 701-900:0.49 | >900:0.30
-* **M_DURATA:** ≤1h:1.05 | 1-2h:1.07 | 2-4h:1.10 | >4h:1.15
-* **M_LINGUA:** ITA:1.05 | ENG:1.10
-* **M_LOCATION:** MI:1.00 | RM:0.95 | VE:1.30 | Centro:1.05 | Nord/Sud:1.15 | Isole:1.30
-* **M_STAGIONE:** Mag-Ott:1.10 | Nov-Apr:1.02
+Usa sempre questa tabella per calcolare i coefficienti:
 
-**PASSO 3: FORMULA**
-🔴 **Standard:** `P_BASE * M_PAX * M_DURATA * M_LINGUA * M_LOCATION * M_STAGIONE * PAX`
-🔵 **Flat:** Pax<=20:1800 | 21-40:1800+((Pax-20)*35) | 41-60:2500+((Pax-40)*50) | 61-100:3500+((Pax-60)*37.5) | >100:5000+((Pax-100)*13.5)
+* **M_PAX (Quantità):**
+    * < 5 pax: **3.20**
+    * 5 - 10 pax: **1.60**
+    * 11 - 20 pax: **1.05**
+    * 21 - 30 pax: **0.95**
+    * 31 - 60 pax: **0.90**
+    * 61 - 90 pax: **0.90**
+    * 91 - 150 pax: **0.85**
+    * 151 - 250 pax: **0.70**
+    * 251 - 350 pax: **0.63**
+    * 351 - 500 pax: **0.55**
+    * 501 - 700 pax: **0.50**
+    * 701 - 900 pax: **0.49**
+    * > 900 pax: **0.30**
 
-**PASSO 4: ARROTONDAMENTO**
-00-39 -> Difetto | 40-99 -> Eccesso. Minimo 1800.
+* **ALTRI MOLTIPLICATORI (Default = 1.00 se non specificato):**
+    * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) | >4h (1.15)
+    * **M_LINGUA:** Italiano (1.05) | Inglese (1.10)
+    * **M_LOCATION:** Milano (1.00) | Roma (0.95) | Venezia (1.30) | Centro (1.05) | Nord/Sud (1.15) | Isole (1.30)
+    * **M_STAGIONE:** Mag-Ott (1.10) | Nov-Apr (1.02)
+
+**PASSO 3: APPLICA LA FORMULA CORRETTA**
+Verifica la colonna "Metodo" nel CSV e applica una delle due formule seguenti. NON ESISTONO ALTRI CASI.
+
+🔴 **CASO 1: METODO "Standard"**
+(Da usare quando la colonna Metodo è "Standard" oppure vuota, oppure se P_BASE < 400).
+`TOTALE_GREZZO = P_BASE * M_PAX * M_DURATA * M_LINGUA * M_LOCATION * M_STAGIONE * PAX`
+
+🔵 **CASO 2: METODO "Flat"**
+(Da usare SOLO quando la colonna Metodo è esattamente "Flat" o "Forfait").
+In questo caso il P_BASE viene ignorato. Il calcolo segue questi scaglioni fissi:
+* **Pax <= 20:** € 1.800,00
+* **Pax 21 - 40:** `1.800 + ((Pax - 20) * 35)`
+* **Pax 41 - 60:** `2.500 + ((Pax - 40) * 50)`
+* **Pax 61 - 100:** `3.500 + ((Pax - 60) * 37.50)`
+* **Pax > 100:** `5.000 + ((Pax - 100) * 13.50)`
+*(Nota: Applica eventuali extra M_LOCATION / M_LINGUA al risultato se necessario).*
+
+**PASSO 4: ARROTONDAMENTO (Regola del 39)**
+Prendi le ultime due cifre del TOTALE_GREZZO:
+* **00 - 39:** Arrotonda per DIFETTO al centinaio (es. 2235 -> 2.200).
+* **40 - 99:** Arrotonda per ECCESSO al centinaio (es. 2245 -> 2.300).
+* **Minimum Spending:** Il preventivo non può mai essere inferiore a € 1.800,00 (+IVA).
 
 ---
 
 ### 🚦 ORDINE DI OUTPUT (OBBLIGATORIO)
 
 **FASE 1: INTRODUZIONE**
-Scrivi un paragrafo di saluti professionale di 3-4 righe.
+Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine per spaziatura). Saluta {cliente_input}, cita i dettagli del brief e usa un tono caldo e professionale.
 
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: NO CSS - SOLO ATTRIBUTI HTML + TRIPLA VERNICIATURA**
+⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
-Struttura: Tabella Madre (600px) -> Cella Rossa (Pipe Rosso) | Cella Spazio (Grigio) | Cella Testo (Grigio con Tabella annidata GRIGIA con Cella GRIGIA).
+La riga rossa contiene il pipe colorato. L'ultima riga contiene 100 underscore bianchi.
+Lo sfondo grigio è applicato 3 volte per sicurezza.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
-    <td width="10" bgcolor="#f8f9fa"></td>
-    <td width="585" bgcolor="#f8f9fa" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa">
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
+    <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
+    <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
         <tr>
-          <td align="left" bgcolor="#f8f9fa">
+          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
             <strong>TITOLO CATEGORIA</strong><br>
             <font color="#666666"><i>CLAIM</i></font>
           </td>
@@ -380,49 +422,53 @@ Copia ESATTAMENTE:
     </td>
   </tr>
   <tr>
-    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
-`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format.<br>`
+`<br><strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format che spiega l'attività.<br>`
 
 Le categorie sono:
-1.  **I BEST SELLER** (4 format)
-2.  **LE NOVITÀ** (4 format)
-3.  **VIBE & RELAX** (2 format)
-4.  **SOCIAL** (2 format)
+1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
+2.  **LE NOVITÀ** (4 format) - Claim: "Freschi di lancio"
+3.  **VIBE & RELAX** (2 format) - Claim: "Atmosfera e condivisione"
+4.  **SOCIAL** (2 format) - Claim: "Impatto positivo"
+
+*Regole Format:* Usa il grassetto HTML per il titolo. NON usare Markdown.
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA (12 RIGHE)**
-NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
-⚠️ **CRITICO:** Una riga `<tr>` per ogni format.
+**FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - 12 RIGHE DISTINTE)**
+NON USARE MARKDOWN. Genera una tabella HTML pura.
+⚠️ **LINK:** Cerca il link PDF nella colonna "Scheda Tecnica" o "Link" del database e inseriscilo in href.
+⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
+⚠️ **BORDI:** Usa `border="0"`.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA):**
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b"><font color="#ff4b4b">|</font></td>
-    <td width="10" bgcolor="#f8f9fa"></td>
-    <td width="585" bgcolor="#f8f9fa" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa">
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
+    <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
+    <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
         <tr>
-          <td align="left" bgcolor="#f8f9fa">
+          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
             <strong>TABELLA RIEPILOGATIVA</strong><br>
-            <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input}</i></font>
+            <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
           </td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
-**CONTENUTO TABELLA (COPIA ESATTO - CELLPADDING 8 - NO BORDER):**
+**CONTENUTO TABELLA (SEGUI QUESTO SCHEMA PER OGNI FORMAT):**
 `<table width="600" border="0" cellspacing="0" cellpadding="8">
-  <tr bgcolor="#f1f3f4">
+  <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
     <th width="120" align="left">Costo Totale (+IVA)</th>
     <th width="240" align="left">Scheda Tecnica</th>
@@ -431,25 +477,29 @@ NON USARE MARKDOWN. Genera una tabella HTML pura con `border="0"`.
   <tr>
     <td align="left"><strong>🍳 Cooking</strong></td>
     <td align="left">€ 2.400,00</td>
-    <td align="left"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
+    <td align="left"><a href="LINK_REALE_DAL_DATABASE">Cooking.pdf</a></td>
   </tr>
-
   <tr>
-    <td colspan="3" bgcolor="#ffffff"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
 **FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco dopo la tabella.
+Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare per spaziare.
 
 <br><br>
 <strong>Informazioni Utili</strong><br><br>
 
 ✔️ **Tutti i format sono nostri** e possiamo personalizzarli senza alcun problema.<br>
+
 ✔️ **La location non è inclusa** ma possiamo aiutarti a trovare quella perfetta per il tuo evento.<br>
-✔️ **Le attività di base** sono pensate per farvi stare insieme e divertirvi, ma il team building è anche formazione.<br>
+
+✔️ **Le attività di base** sono pensate per farvi stare insieme e divertirvi, ma il team building è anche formazione, aspetto che possiamo includere e approfondire.<br>
+
 ✔️ **Prezzo all inclusive:** spese staff, trasferta e tutti i materiali sono inclusi, nessun costo a consuntivo.<br>
+
 ✔️ **Assicurazione pioggia:** Se avete scelto un format oudoor ma le previsioni meteo sono avverse, due giorni prima dell'evento sceglieremo insieme un format indoor allo stesso costo.<br>
+
 ✔️ **Chiedici anche** servizio video/foto e gadget.
 """
 
@@ -470,6 +520,7 @@ if generate_btn:
     
     prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_input}. Obiettivo: {obiettivo_input}."
     
+    # Aggiungi messaggio utente alla chat e alla history
     st.session_state.messages.append({"role": "user", "content": prompt_to_process})
 
 chat_input = st.chat_input("Chiedi una modifica...")
@@ -483,6 +534,7 @@ for message in st.session_state.messages:
 
 # --- 8. ELABORAZIONE AI (SOLO GEMINI) ---
 if prompt_to_process:
+    # Se input manuale (chat_input), aggiungilo alla history se non c'è già
     if not st.session_state.messages or st.session_state.messages[-1]["content"] != prompt_to_process:
         st.session_state.messages.append({"role": "user", "content": prompt_to_process})
     
@@ -519,12 +571,14 @@ if prompt_to_process:
                     chat = model.start_chat(history=history_gemini[:-1])
                     response = chat.send_message(prompt_to_process)
                     
-                    # --- MODIFICA HUBSPOT ---
+                    # --- MODIFICA HUBSPOT: ESPANSIONE LINK CORTO E TRACCIAMENTO ---
                     response_text_raw = response.text
                     if hubspot and email_tracking_input:
+                          # Chiama la versione 4.0 di hubspot.py che gestisce hubs.ly + requests
                           response_text = hubspot.inject_tracking_to_text(response_text_raw, email_tracking_input)
                     else:
                           response_text = response_text_raw
+                    # --------------------------------------------------------------
 
                     st.markdown(response_text, unsafe_allow_html=True) 
                     st.session_state.messages.append({"role": "model", "content": response_text})
