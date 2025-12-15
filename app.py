@@ -322,7 +322,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABLE-LAYOUT FIXED + COLORE LINK) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: NO IMG, 2 COLONNE 59+541, LINK SALVI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -400,28 +400,19 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
-Usa ESCLUSIVAMENTE questo HTML. 
-La prima cella (TD width 59) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMAGINE QUADRATINO ROSSO per forzare la larghezza corretta.
-⚠️ **FIX LARGHEZZA:** Usa `table-layout: fixed`, `width: 59px` e inserisci l'immagine `https://www.teambuilding.it/red.png`.
+⚠️ **IMPORTANTE: LAYOUT A DUE COLONNE (59px + 541px)**
+Usa ESCLUSIVAMENTE questo HTML. Non usare immagini. Usa solo celle colorate.
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse; table-layout: fixed;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; min-width: 59px; max-width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0; width: 59px; height: 98px;"></td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td>
-    <td width="531" bgcolor="#f8f9fa" style="width: 531px; background-color: #f8f9fa;" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-        <tr>
-          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-            <strong>TITOLO CATEGORIA</strong><br>
-            <font color="#666666"><i>CLAIM</i></font>
-          </td>
-        </tr>
-      </table>
+    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px;">&nbsp;</td>
+    <td width="541" bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; width: 541px;">
+      <strong>TITOLO CATEGORIA</strong><br>
+      <font color="#666666"><i>CLAIM</i></font>
     </td>
   </tr>
   <tr>
-    <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td colspan="2" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -452,25 +443,18 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png 59x98 e sfondo #e51b20).
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse; table-layout: fixed;">
+**TITOLO TABELLA (DUE COLONNE - 59px + 541px):**
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva.
+`<br><table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; min-width: 59px; max-width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0; width: 59px; height: 98px;"></td>
-    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td>
-    <td width="531" bgcolor="#f8f9fa" style="width: 531px; background-color: #f8f9fa;" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-        <tr>
-          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-            <strong>TABELLA RIEPILOGATIVA</strong><br>
-            <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
-          </td>
-        </tr>
-      </table>
+    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px;">&nbsp;</td>
+    <td width="541" bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; width: 541px;">
+      <strong>TABELLA RIEPILOGATIVA</strong><br>
+      <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
   </tr>
   <tr>
-    <td colspan="3" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td colspan="2" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
