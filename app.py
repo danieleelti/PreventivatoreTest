@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (Visualizzazione Anteprima Streamlit) ---
+# --- CSS PERSONALIZZATO (TAHOMA - FORZATURA 600PX) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -37,9 +37,11 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* Le tabelle nell'anteprima Streamlit si adattano, ma il codice copiato sarà fisso a 600px */
+    /* FORZATURA TABELLE A 600PX ANCHE IN ANTEPRIMA */
     div[data-testid="stChatMessage"] table {
-        width: 100% !important; 
+        width: 600px !important; /* QUI ERA L'ERRORE (PRIMA ERA 100%) */
+        min-width: 600px !important;
+        max-width: 600px !important;
         border-collapse: collapse !important;
         border: 0px solid transparent !important;
         font-size: 14px !important;
@@ -102,6 +104,7 @@ def reset_preventivo():
     for key in keys_to_clear:
         if key in st.session_state:
             st.session_state[key] = ""
+    # Reset specifico per la durata
     if "wdg_durata" in st.session_state:
         st.session_state["wdg_durata"] = "1-2h"
 
@@ -325,7 +328,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: FIXED 600PX WIDTH PER TUTTE LE TABELLE) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLE 600PX FISSI - NO 100%) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -403,7 +406,7 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT FISSO 600PX**
+⚠️ **IMPORTANTE: LAYOUT FISSO 600PX (NO 100%)**
 1.  Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE con `width="600"`:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td width="585" bgcolor="#f8f9fa" align="left" style="width: 585px; background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
