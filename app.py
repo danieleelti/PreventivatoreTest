@@ -372,7 +372,7 @@ Usa sempre questa tabella per calcolare i coefficienti:
 * **ALTRI MOLTIPLICATORI (Default = 1.00 se non specificato):**
     * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) | >4h (1.15)
     * **M_LINGUA:** Italiano (1.05) | Inglese (1.10)
-    * **M_LOCATION:** Milano (1.00) | Roma (0.95) | Centro (1.05) | Nord/Sud (1.15) | Isole (1.30)
+    * **M_LOCATION:** Milano (1.00) | Roma (0.95) | Venezia (1.30) | Centro (1.05) | Nord/Sud (1.15) | Isole (1.30)
     * **M_STAGIONE:** Mag-Ott (1.10) | Nov-Apr (1.02)
 
 **PASSO 3: APPLICA LA FORMULA CORRETTA**
@@ -544,3 +544,4 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
