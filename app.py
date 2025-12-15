@@ -13,7 +13,6 @@ import pytz
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
 # --- GENERAZIONE SPACER CALIBRATO (125) ---
-# 125 underscore bianchi per allargare la tabella riepilogativa
 spacer_text = "_" * 125 
 
 # --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
@@ -323,7 +322,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: BG #e51b20 + LINK LinkHubSpot + 0 SPAZI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA HTML BLINDATA + LINK HUBSPOT OBBLIGATORI) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -402,23 +401,18 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
-Usa ESCLUSIVAMENTE questo HTML. 
-La prima cella (TD width 59) è la COLONNA ROSSA.
-⚠️ **FIX SFONDO E SPAZI:** Usa `bgcolor="#e51b20"` e `style="background-color: #e51b20; padding: 0; margin: 0; line-height: 0; font-size: 0;"`.
-Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
+Usa ESCLUSIVAMENTE questo HTML "blindato" per la tabella del titolo. 
+La prima cella (TD) è quella rossa. È fondamentale che `width` e `style width` siano entrambi a 59px e che il `padding` sia 0.
+Copia ESATTAMENTE questo blocco:
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
   <tr>
-    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0;"></td>
-    <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
-    <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-        <tr>
-          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-            <strong>TITOLO CATEGORIA</strong><br>
-            <font color="#666666"><i>CLAIM</i></font>
-          </td>
-        </tr>
-      </table>
+    <td width="59" bgcolor="#e51b20" valign="top" style="width: 59px; min-width: 59px; max-width: 59px; background-color: #e51b20; padding: 0; margin: 0; line-height: 0; font-size: 0;">
+      <img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; width: 59px; height: 98px; border: 0;" alt="">
+    </td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td>
+    <td width="531" bgcolor="#f8f9fa" align="left" style="width: 531px; background-color: #f8f9fa; padding: 10px;">
+      <strong>TITOLO CATEGORIA</strong><br>
+      <font color="#666666"><i>CLAIM</i></font>
     </td>
   </tr>
   <tr>
@@ -444,7 +438,7 @@ Le categorie sono:
 **FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - UNICA TABELLA)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **DIVIETO EMOJI:** NON usare emoji all'interno della tabella. Solo testo.
-⚠️ **SELEZIONE LINK:** Usa ESCLUSIVAMENTE il link presente nella colonna "LinkHubSpot" del database. NON USARE ALTRE COLONNE.
+⚠️ **SELEZIONE LINK:** Devi estrarre il link SOLO dalla colonna chiamata esattamente "LinkHubSpot" del database. Se quella colonna è vuota, non mettere link.
 ⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il "Nome del Format" seguito da ".pdf" (es. "Csi Project.pdf").
 ⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
@@ -453,20 +447,16 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png e sfondo #e51b20).
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0">
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png 59x98 e sfondo #e51b20).
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
   <tr>
-    <td width="59" bgcolor="#e51b20" style="background-color: #e51b20; width: 59px; padding: 0px; margin: 0px; line-height: 0; font-size: 0;"><img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; border: 0; padding: 0; margin: 0;"></td>
-    <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
-    <td width="531" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
-      <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-        <tr>
-          <td align="left" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
-            <strong>TABELLA RIEPILOGATIVA</strong><br>
-            <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
-          </td>
-        </tr>
-      </table>
+    <td width="59" bgcolor="#e51b20" valign="top" style="width: 59px; min-width: 59px; max-width: 59px; background-color: #e51b20; padding: 0; margin: 0; line-height: 0; font-size: 0;">
+      <img src="https://www.teambuilding.it/red.png" width="59" height="98" style="display: block; width: 59px; height: 98px; border: 0;" alt="">
+    </td>
+    <td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td>
+    <td width="531" bgcolor="#f8f9fa" align="left" style="width: 531px; background-color: #f8f9fa; padding: 10px;">
+      <strong>TABELLA RIEPILOGATIVA</strong><br>
+      <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
   </tr>
   <tr>
@@ -476,7 +466,6 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 
 **STRUTTURA CONTENUTO TABELLA (Unica Tabella):**
 ⚠️ **ALLINEAMENTO:** Le colonne 2 e 3 DEVONO essere centrate (`align="center"`).
-⚠️ **LINK:** Assicurati di usare il valore della colonna 'LinkHubSpot' per href.
 `<table width="600" border="0" cellspacing="0" cellpadding="10">
   <tr bgcolor="#f1f3f4" style="background-color: #f1f3f4;">
     <th width="240" align="left">Nome Format</th>
