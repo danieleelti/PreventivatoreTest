@@ -13,7 +13,7 @@ import pytz
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
 # --- GENERAZIONE SPACER CALIBRATO (125) ---
-spacer_text = "_" * 125 
+spacer_text = "_" * 100 
 
 # --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
@@ -590,3 +590,4 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
