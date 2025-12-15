@@ -12,7 +12,7 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- CSS PERSONALIZZATO (TAHOMA) ---
+# --- CSS PERSONALIZZATO (TAHOMA - STREAMLIT VIEW) ---
 st.markdown("""
 <style>
     /* Stile generale messaggi CHAT */
@@ -37,7 +37,7 @@ st.markdown("""
         text-transform: uppercase !important;
     }
 
-    /* BLOCCHI ROSSI (Titoli Categorie e Tabella) - MANTENUTI PER SICUREZZA VISIVA STREAMLIT */
+    /* BLOCCHI ROSSI (Titoli Categorie e Tabella) */
     .block-header {
         background-color: #f8f9fa;
         border-left: 5px solid #ff4b4b;
@@ -68,7 +68,7 @@ st.markdown("""
     div[data-testid="stChatMessage"] table {
         width: 100% !important;
         border-collapse: collapse !important;
-        border: 0px solid transparent !important; /* Bordi invisibili su Streamlit */
+        border: 0px solid transparent !important;
         font-size: 14px !important;
         margin-top: 10px !important;
         font-family: 'Tahoma', sans-serif !important;
@@ -84,7 +84,7 @@ st.markdown("""
     }
     div[data-testid="stChatMessage"] td {
         padding: 10px !important;
-        border-bottom: 1px solid #f0f0f0 !important; /* Leggerissima riga solo per separare */
+        border-bottom: 1px solid #f0f0f0 !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     
@@ -125,12 +125,11 @@ def reset_preventivo():
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
     # Aggiornato con il campo email
-    # Nota: wdg_durata rimosso da qui e gestito separatamente per evitare errori col selectbox
     keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
             st.session_state[key] = ""
-    # Reset specifico per la durata (torna al default 1-2h)
+    # Reset specifico per la durata
     if "wdg_durata" in st.session_state:
         st.session_state["wdg_durata"] = "1-2h"
 
@@ -245,15 +244,14 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- GENERAZIONE AFORISMA CON GEMINI ---
+    # --- GENERAZIONE AFORISMA CON GEMINI (FIX: SAFETY SETTINGS APPLICATI) ---
     quote = ""
     try:
-        # Recupera chiave API per generare la quote
         api_key_quote = st.secrets.get("GOOGLE_API_KEY")
         if api_key_quote:
             genai.configure(api_key=api_key_quote)
             
-            # --- Sblocco Safety Settings anche per la quote ---
+            # Applico i filtri "Nessun Blocco" anche qui per variare gli aforismi
             safety_quote = {
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -261,7 +259,6 @@ if "messages" not in st.session_state or not st.session_state.messages:
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
             
-            # Usa il modello Flash per massima velocità
             model_quote = genai.GenerativeModel("gemini-1.5-flash") 
             prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
             
@@ -270,8 +267,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
         else:
             raise Exception("API Key non trovata")
     except Exception as e:
-        print(f"Errore Aforisma: {e}") # Debug in console
-        # Fallback statico se API fallisce
+        print(f"Errore Aforisma: {e}") 
         fallback_quotes = [
             "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
             "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
@@ -358,7 +354,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLA RIEPILOGATIVA A 3 COLONNE + INFO FINALI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: TABELLE 100% WIDE + 3 COLONNE RIGIDE) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -436,31 +432,29 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: SPAZIATURA E LAYOUT**
-1.  Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE con `min-width: 100%`:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
-
-2.  **SPAZIATURA FORMAT:** Tra un format e l'altro, devi inserire un doppio a capo: `<br><br>` oppure una riga vuota, affinché non risultino appiccicati.
+⚠️ **LAYOUT TITOLI CATEGORIE (100% WIDTH)**
+Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE:
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
 
 Le categorie sono:
-1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
-2.  **LE NOVITÀ** (4 format) - Claim: "Freschi di lancio"
-3.  **VIBE & RELAX** (2 format) - Claim: "Atmosfera e condivisione"
-4.  **SOCIAL** (2 format) - Claim: "Impatto positivo"
+1.  **I BEST SELLER** (4 format)
+2.  **LE NOVITÀ** (4 format)
+3.  **VIBE & RELAX** (2 format)
+4.  **SOCIAL** (2 format)
 
-*Regole Format:* Usa il grassetto HTML per il titolo (es. "<strong>🍳 Cooking</strong>"). NON usare Markdown.
+*Regole Format:* Usa il grassetto HTML per il titolo (es. "<strong>🍳 Cooking</strong>"). Tra un format e l'altro usa `<br><br>` per staccarli.
 
 {location_guardrail_prompt}
 
 **FASE 3: TABELLA RIEPILOGATIVA (SOLO 3 COLONNE)**
 NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili (`border="0"`).
-NON aggiungere colonne extra (es. note, durata, pax). SOLO le 3 colonne specificate qui sotto.
+NON aggiungere colonne extra (es. note, durata, pax). SOLO le 3 colonne specificate nel template.
 
 **TITOLO TABELLA:**
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left; width: 100%;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 CELLE):**
-`<table width="100%" border="0" cellspacing="0" cellpadding="10" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
+**CONTENUTO TABELLA (COPIA QUESTO TEMPLATE ESATTO - SOLO 3 COLONNE):**
+`<table width="100%" border="0" cellspacing="0" cellpadding="8" style="width: 100% !important; border: 0 !important; border-collapse: collapse;">
   <tr style="background-color: #f1f3f4;">
     <th width="40%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Nome Format</th>
     <th width="20%" align="left" style="font-family: 'Tahoma', sans-serif; border: 0; text-align: left;">Costo Totale (+IVA)</th>
@@ -473,11 +467,11 @@ NON aggiungere colonne extra (es. note, durata, pax). SOLO le 3 colonne specific
   </tr>
 </table>`
 
-**FASE 4: INFO UTILI (OBBLIGATORIO)**
-Scrivi SEMPRE questo blocco finale, DOPO aver chiuso la tabella:
+**FASE 4: INFO UTILI**
+Scrivi SEMPRE questo blocco dopo aver chiuso la tabella `</table>`. Usa `<br><br>` prima di iniziare per spaziare.
 
 <br><br>
-**Informazioni Utili**
+### Informazioni Utili
 
 ✔️ **Tutti i format sono nostri** e possiamo personalizzarli senza alcun problema.
 
