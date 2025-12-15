@@ -368,22 +368,18 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT FISSO (60px + 540px)**
-Usa ESCLUSIVAMENTE questo HTML. 
-La prima cella (TD) DEVE contenere l'immagine red.png forzata a width="60". Questo è l'unico modo per garantire la larghezza in HubSpot.
+⚠️ **IMPORTANTE: LAYOUT CON SFONDO (600px)**
+Usa ESCLUSIVAMENTE questo HTML. Tabella a una sola colonna con l'immagine red.png come sfondo.
 Copia ESATTAMENTE:
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse; table-layout: fixed;">
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
   <tr>
-    <td width="60" valign="top" style="width: 60px; min-width: 60px; padding: 0; margin: 0; line-height: 0; font-size: 0; background-color: #e51b20;" bgcolor="#e51b20">
-      <img src="https://www.teambuilding.it/red.png" width="60" height="98" style="display: block; border: 0; width: 60px; height: 98px;" alt="">
-    </td>
-    <td width="540" valign="middle" bgcolor="#f8f9fa" style="width: 540px; min-width: 540px; background-color: #f8f9fa; padding: 10px;">
+    <td width="600" valign="middle" bgcolor="#f8f9fa" background="https://www.teambuilding.it/red.png" style="width: 600px; background-color: #f8f9fa; background-image: url('https://www.teambuilding.it/red.png'); background-repeat: no-repeat; background-position: left top; padding: 20px;">
       <strong>TITOLO CATEGORIA</strong><br>
-      <font color="#666666"><i>CLAIM</i></font>
+      <font color="#ffffff"><i>CLAIM</i></font>
     </td>
   </tr>
   <tr>
-    <td colspan="2" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -414,20 +410,17 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPAZIATURA:** Usa `cellpadding="10"`.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
-**TITOLO TABELLA (DUE COLONNE - 60px + 540px):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (stessa immagine, stesse misure).
-`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse; table-layout: fixed;">
+**TITOLO TABELLA (SFONDO):**
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (immagine di sfondo red.png).
+`<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; border-collapse: collapse;">
   <tr>
-    <td width="60" valign="top" style="width: 60px; min-width: 60px; padding: 0; margin: 0; line-height: 0; font-size: 0; background-color: #e51b20;" bgcolor="#e51b20">
-      <img src="https://www.teambuilding.it/red.png" width="60" height="98" style="display: block; border: 0; width: 60px; height: 98px;" alt="">
-    </td>
-    <td width="540" valign="middle" bgcolor="#f8f9fa" style="width: 540px; min-width: 540px; background-color: #f8f9fa; padding: 10px;">
+    <td width="600" valign="middle" bgcolor="#f8f9fa" background="https://www.teambuilding.it/red.png" style="width: 600px; background-color: #f8f9fa; background-image: url('https://www.teambuilding.it/red.png'); background-repeat: no-repeat; background-position: left top; padding: 20px;">
       <strong>TABELLA RIEPILOGATIVA</strong><br>
-      <font color="#666666"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
+      <font color="#ffffff"><i>Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
     </td>
   </tr>
   <tr>
-    <td colspan="2" bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
+    <td bgcolor="#ffffff" style="background-color: #ffffff;"><font color="#ffffff" size="1">{spacer_text}</font></td>
   </tr>
 </table>`
 
@@ -562,6 +555,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
 
 
