@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: DESCRIZIONI LUNGHE E SPACER AUMENTATO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: FIX LARGHEZZA COLONNA ROSSA E PADDING 0) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -404,10 +404,10 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
 La prima cella (TD width 5) è la COLONNA ROSSA. Al suo interno c'è una pipe (|) colorata di rosso (#ff4b4b) su sfondo rosso (#ff4b4b), quindi invisibile.
-Copia ESATTAMENTE:
+⚠️ **FIX LARGHEZZA:** Ho aggiunto `style="padding:0px; width:5px;"` e `size="1"` alla pipe. Copia ESATTAMENTE.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><font color="#ff4b4b" size="1">|</font></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -452,7 +452,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva.
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b;"><font color="#ff4b4b">|</font></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><font color="#ff4b4b" size="1">|</font></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
