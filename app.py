@@ -68,7 +68,7 @@ st.markdown("""
     div[data-testid="stChatMessage"] table {
         width: 100% !important;
         border-collapse: collapse !important;
-        border: 1px solid #e0e0e0 !important;
+        border: 0px solid transparent !important; /* Bordi invisibili su Streamlit */
         font-size: 14px !important;
         margin-top: 10px !important;
         font-family: 'Tahoma', sans-serif !important;
@@ -79,12 +79,12 @@ st.markdown("""
         font-weight: bold;
         text-align: left;
         padding: 12px !important;
-        border-bottom: 2px solid #ddd !important;
+        border-bottom: 0px solid transparent !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] td {
         padding: 10px !important;
-        border-bottom: 1px solid #eee !important;
+        border-bottom: 1px solid #f0f0f0 !important; /* Leggerissima riga solo per separare */
         font-family: 'Tahoma', sans-serif !important;
     }
     
@@ -347,7 +347,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: FIXED TABLE WIDTH CONFLICT) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: MIN-WIDTH E SPACER) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -425,9 +425,11 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE PER HUBSPOT: NO CSS BORDERS, NO PADDING, SOLO CELLE E WIDTH 100%**
-Usa ESCLUSIVAMENTE questo codice HTML "Table-Layout" per ogni titolo categoria. Copialo ESATTAMENTE con le larghezze esplicite e align left:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
+⚠️ **IMPORTANTE: SPAZIATURA E LAYOUT**
+1.  Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. Copialo ESATTAMENTE con `min-width: 100%`:
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TITOLO CATEGORIA</strong><br><span style="font-size: 14px; font-style: italic; color: #666;">CLAIM</span></td></tr></table>`
+
+2.  **SPAZIATURA FORMAT:** Tra un format e l'altro, devi inserire un doppio a capo: `<br><br>` oppure una riga vuota, affinché non risultino appiccicati.
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -435,24 +437,34 @@ Le categorie sono:
 3.  **VIBE & RELAX** (2 format) - Claim: "Atmosfera e condivisione"
 4.  **SOCIAL** (2 format) - Claim: "Impatto positivo"
 
-*Regole Format:* Usa il grassetto HTML per il titolo (es. "<strong>🍳 Cooking</strong>"). NON usare Markdown (### o **).
+*Regole Format:* Usa il grassetto HTML per il titolo (es. "<strong>🍳 Cooking</strong>"). NON usare Markdown.
 
 {location_guardrail_prompt}
 
-**FASE 3: TABELLA RIEPILOGATIVA**
-Usa ESATTAMENTE questo HTML "Table-Layout" per il titolo della tabella:
-`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; margin-top: 30px; margin-bottom: 20px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
+**FASE 3: TABELLA RIEPILOGATIVA (NO MARKDOWN - SOLO HTML)**
+NON USARE MARKDOWN. Genera una tabella HTML pura, senza bordi visibili.
+Usa ESATTAMENTE questo codice per il titolo della tabella (`min-width` incluso):
+`<br><table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse; margin-top: 30px; margin-bottom: 10px;"><tr><td width="5" bgcolor="#ff4b4b" style="width: 5px; background-color: #ff4b4b; border: 0;"></td><td width="10" bgcolor="#f8f9fa" style="width: 10px; background-color: #f8f9fa; border: 0;"></td><td bgcolor="#f8f9fa" align="left" style="background-color: #f8f9fa; border: 0; padding: 10px; font-family: 'Tahoma', sans-serif; text-align: left;"><strong style="font-size: 18px; color: #333; text-transform: uppercase;">TABELLA RIEPILOGATIVA</strong><br><span style="font-size: 13px; font-style: italic; color: #666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</span></td></tr></table>`
 
-**LINK SCHEDA TECNICA (⚠️ REGOLA FONDAMENTALE HUBSPOT):**
-* Devi cercare nel database la colonna che contiene il link breve di HubSpot.
-* **CRITERIO DI SELEZIONE:** Usa ESCLUSIVAMENTE l'URL che inizia con `https://eu1.hubs.ly` o `https://hubs.ly`.
-* **DIVIETO:** NON usare link di Google Drive, Dropbox o altri URL lunghi (es. colonna T) se è presente un link `hubs.ly`.
-* Il testo del link DEVE essere il nome del file (es. `Cooking.pdf`). Non usare "Link" o "Scarica".
-* Formato Markdown: `[NomeFormat.pdf](LINK_HUBS_LY_TROVATO)`
+**GENERAZIONE DATI (HTML PURO):**
+Genera il contenuto della tabella usando questo template HTML (Senza bordi, cellpadding per spaziatura, min-width 100%):
+`<table width="100%" border="0" cellspacing="0" cellpadding="8" style="width: 100% !important; min-width: 100% !important; border: 0 !important; border-collapse: collapse;">
+  <tr style="background-color: #f1f3f4;">
+    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Nome Format</th>
+    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Costo Totale (+IVA)</th>
+    <th align="left" style="font-family: 'Tahoma', sans-serif; padding: 10px; border: 0;">Scheda Tecnica</th>
+  </tr>
+  <tr>
+    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;"><strong>🍳 Cooking</strong></td>
+    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;">€ 2.400,00</td>
+    <td style="font-family: 'Tahoma', sans-serif; padding: 10px; border-bottom: 1px solid #eeeeee;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
+  </tr>
+</table>`
 
-| Nome Format | Costo Totale (+IVA) | Scheda Tecnica |
-| :--- | :--- | :--- |
-| 🍳 Cooking | € 2.400,00 | [Cooking.pdf](https://eu1.hubs.ly/...) |
+**NOTE TECNICHE LINK HUBSPOT:**
+* Cerca link `https://eu1.hubs.ly` o `https://hubs.ly`.
+* Se manca, usa link alternativi.
+* Testo link = Nome file (es. `Cooking.pdf`).
 
 **FASE 4: INFO UTILI**
 Copia ESATTAMENTE questo blocco:
