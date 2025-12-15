@@ -12,9 +12,9 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- GENERAZIONE SPACER CALIBRATO (AUMENTATO A 115) ---
-# 115 underscore bianchi per allargare la tabella riepilogativa
-spacer_text = "_" * 115 
+# --- GENERAZIONE SPACER CALIBRATO (AUMENTATO A 125) ---
+# 125 underscore bianchi per allargare la tabella riepilogativa
+spacer_text = "_" * 125 
 
 # --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: USO TASSATIVO COLONNA LinkHubSpot) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: IMAGE RED CORRETTA + SPACER 125) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -408,7 +408,7 @@ La prima cella (TD width 5) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMA
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" style="display: block; border: 0;"></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" height="5" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -455,7 +455,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png).
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" style="display: block; border: 0;"></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" height="5" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
