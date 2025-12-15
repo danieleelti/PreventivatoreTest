@@ -12,9 +12,9 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- GENERAZIONE SPACER CALIBRATO ---
-# 100 underscore bianchi per forzare la larghezza su HubSpot mobile/desktop
-spacer_text = "_" * 100 
+# --- GENERAZIONE SPACER CALIBRATO (AUMENTATO A 115) ---
+# 115 underscore bianchi per allargare la tabella riepilogativa
+spacer_text = "_" * 115 
 
 # --- CSS PERSONALIZZATO (SOLO PER ANTEPRIMA STREAMLIT) ---
 st.markdown("""
@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: ALLINEAMENTO CENTRATO TABELLA E TITOLI IDENTICI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: DESCRIZIONI LUNGHE E SPACER AUMENTATO) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -427,7 +427,7 @@ Copia ESATTAMENTE:
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
 ⚠️ **ATTENZIONE:** NON inserire spazi o `<br>` tra la fine della tabella titolo e l'inizio del primo format. Devono essere attaccati.
-`<strong>EMOJI NOME FORMAT</strong><br>Descrizione breve e accattivante del format che spiega l'attività.<br>`
+`<strong>EMOJI NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente. Deve essere il doppio rispetto al solito.<br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
