@@ -12,9 +12,10 @@ import pytz
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(page_title="TEST", page_icon="🦁💰", layout="wide")
 
-# --- GENERAZIONE SPACER LUNGHISSIMO (800 caratteri) ---
-# Questo serve per forzare la larghezza a 600px anche con font 1px
-spacer_text = "_" * 800 
+# --- GENERAZIONE SPACER CALIBRATO (100 caratteri) ---
+# 100 underscore a font normale occupano circa 600px-700px.
+# Questo forza la larghezza senza creare una riga chilometrica.
+spacer_text = "_" * 100 
 
 # --- CSS PERSONALIZZATO (Visualizzazione Anteprima Streamlit) ---
 st.markdown("""
@@ -59,14 +60,14 @@ st.markdown("""
         font-weight: bold;
         text-align: left;
         padding: 12px !important;
-        border: 0px solid transparent !important; /* Bordi invisibili */
+        border: 0px solid transparent !important;
         outline: none !important;
         font-family: 'Tahoma', sans-serif !important;
     }
     div[data-testid="stChatMessage"] td {
         padding: 10px !important;
-        border: 0px solid transparent !important; /* Bordi invisibili */
-        border-bottom: 1px solid #f0f0f0 !important; /* Solo riga sottile sotto */
+        border: 0px solid transparent !important;
+        border-bottom: 1px solid #f0f0f0 !important;
         outline: none !important;
         font-family: 'Tahoma', sans-serif !important;
     }
@@ -332,7 +333,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: BORDI INVISIBILI + RIGHE SEPARATE + SPACER EXTRA LONG) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: SPACER 100 UNDERSCORE + HTML PURO) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -340,7 +341,7 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 {context_brief}
 
 ### 🛡️ PROTOCOLLO
-1.  **USO DEL DATABASE:** Usa SOLO i dati caricati.
+1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
 2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
 3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
 
@@ -410,9 +411,9 @@ Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine p
 **FASE 2: LA REGOLA DEL 12 (4+4+2+2)**
 Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 
-⚠️ **IMPORTANTE: LAYOUT CON SPACER GIGANTE E BORDI INVISIBILI**
+⚠️ **IMPORTANTE: LAYOUT CON SPACER INVISIBILE 100 UNDERSCORE**
 Usa ESCLUSIVAMENTE questo codice HTML per ogni titolo categoria. 
-NON DEVONO ESSERCI BORDI VISIBILI (`border="0"`, `style="border: none"`).
+La riga rossa contiene il pipe colorato. L'ultima riga contiene 100 underscore bianchi.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; min-width: 600px; border-collapse: collapse; border: none !important; margin-top: 20px; margin-bottom: 20px;">
   <tr>
@@ -424,7 +425,7 @@ Copia ESATTAMENTE:
     </td>
   </tr>
   <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
+    <td colspan="3" style="color: #ffffff; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
@@ -443,7 +444,7 @@ Le categorie sono:
 
 **FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - 12 RIGHE DISTINTE)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
-⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`. NON mettere tutti i format in una sola riga.
+⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"` e `style="border: none"`. Solo le celle hanno un bordo sotto (`border-bottom`).
 
 **TITOLO TABELLA:**
@@ -457,7 +458,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
     </td>
   </tr>
   <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
+    <td colspan="3" style="color: #ffffff; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
@@ -475,7 +476,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
     <td align="left" style="font-family: 'Tahoma', sans-serif; border: none !important; border-bottom: 1px solid #eeeeee !important;"><a href="LINK_HUBS_LY">Cooking.pdf</a></td>
   </tr>
   <tr>
-    <td colspan="3" style="color: #ffffff; font-size: 1px; line-height: 1px; background-color: #ffffff; border: none !important;">{spacer_text}</td>
+    <td colspan="3" style="color: #ffffff; background-color: #ffffff; border: none !important;">{spacer_text}</td>
   </tr>
 </table>`
 
