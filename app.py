@@ -242,17 +242,31 @@ if "retry_trigger" not in st.session_state:
 if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = []
     
-    # --- LISTA AFORISMI ---
-    aforismi = [
-        "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
-        "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
-        "Non rimandare a domani quello che puoi far fare a uno stagista oggi.",
-        "Per aspera ad fattura.",
-        "Il cliente ha sempre ragione, tranne quando chiede lo sconto.",
-        "La creatività è l'arte di nascondere le proprie fonti.",
-        "Se tutto sembra sotto controllo, non stai andando abbastanza veloce."
-    ]
-    quote = random.choice(aforismi)
+    # --- GENERAZIONE AFORISMA CON GEMINI ---
+    quote = ""
+    try:
+        # Recupera chiave API per generare la quote
+        api_key_quote = st.secrets.get("GOOGLE_API_KEY")
+        if api_key_quote:
+            genai.configure(api_key=api_key_quote)
+            # Usa il modello Flash per massima velocità
+            model_quote = genai.GenerativeModel("gemini-1.5-flash") 
+            prompt_quote = "Genera un aforisma breve (massimo 1 frase), ironico, cinico e divertente sul mondo del lavoro moderno, sulle riunioni aziendali inutili, sui budget o sui clienti difficili. Stile 'Legge di Murphy' o 'Dilbert'. Scrivi solo l'aforisma in Italiano."
+            response_quote = model_quote.generate_content(prompt_quote)
+            quote = response_quote.text.strip()
+        else:
+            raise Exception("API Key non trovata")
+    except Exception:
+        # Fallback statico se API fallisce o lenta
+        fallback_quotes = [
+            "Il lavoro di squadra è essenziale: ti permette di dare la colpa a qualcun altro.",
+            "Una riunione è un evento in cui si tengono le minute e si perdono le ore.",
+            "Non rimandare a domani quello che puoi far fare a uno stagista oggi.",
+            "Per aspera ad fattura.",
+            "Se tutto sembra sotto controllo, non stai andando abbastanza veloce."
+        ]
+        quote = random.choice(fallback_quotes)
+    
     welcome_msg = f"Ciao **{st.session_state.username}**! 👋\n\n_{quote}_\n\nUsa la barra laterale a sinistra per compilare i dati."
     st.session_state.messages.append({"role": "model", "content": welcome_msg})
 
@@ -544,4 +558,5 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
