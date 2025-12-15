@@ -122,10 +122,14 @@ def reset_preventivo():
     st.session_state.messages = []
     st.session_state.total_tokens_used = 0
     # Aggiornato con il campo email
-    keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_durata", "wdg_obiettivo"]
+    # Nota: wdg_durata rimosso da qui e gestito separatamente per evitare errori col selectbox
+    keys_to_clear = ["wdg_cliente", "wdg_email_track", "wdg_pax", "wdg_data", "wdg_citta", "wdg_obiettivo"]
     for key in keys_to_clear:
         if key in st.session_state:
             st.session_state[key] = ""
+    # Reset specifico per la durata (torna al default 1-2h)
+    if "wdg_durata" in st.session_state:
+        st.session_state["wdg_durata"] = "1-2h"
 
 # --- 2. GESTIONE DATABASE (GOOGLE SHEETS) ---
 def get_gspread_client():
@@ -278,7 +282,16 @@ with st.sidebar:
     with col_pax: pax_input = st.text_input("N. Pax", placeholder="50", key="wdg_pax")
     with col_data: data_evento_input = st.text_input("Data", placeholder="12 Maggio", key="wdg_data")
     citta_input = st.text_input("Città / Location", placeholder="Milano / Villa Reale", key="wdg_citta")
-    durata_input = st.text_input("Durata Attività", placeholder="es. 2-3 ore", key="wdg_durata")
+    
+    # --- MODIFICA RICHIESTA: SELECTBOX DURATA ---
+    durata_input = st.selectbox(
+        "Durata Attività", 
+        options=["<1h", "1-2h", "2-4h", ">4h"], 
+        index=1, # Default: 1-2h (che è l'elemento in posizione 1)
+        key="wdg_durata"
+    )
+    # --------------------------------------------
+
     obiettivo_input = st.text_area("Obiettivo / Mood / Note", placeholder="Descrivi l'obiettivo...", height=100, key="wdg_obiettivo")
 
     st.markdown("###")
@@ -318,11 +331,7 @@ else:
     """
 
 # --- 5. SYSTEM PROMPT (LOGICA LINK HUBSPOT AGGIORNATA) ---
-
-# Gestione Default Durata (MODIFICA 1: Default 2-4h se vuoto)
-durata_effettiva = durata_input if durata_input and durata_input.strip() else "2-4 ore"
-
-context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_effettiva}, Obiettivo: {obiettivo_input}."
+context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
 SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
@@ -332,11 +341,10 @@ SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
 2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
 3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
-4.  **RIGORE:** DEVI SEMPRE APPLICARE IL CALCOLO MATEMATICO DEFINITO SOTTO PER OGNI SINGOLO FORMAT. NON INVENTARE PREZZI.
 
-### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO E OBBLIGATORIO)
+### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO)
 
-Per calcolare il prezzo, segui TASSATIVAMENTE questi passaggi logici senza saltarne nessuno:
+Per calcolare il prezzo, segui questi passaggi logici:
 
 **PASSO 1: IDENTIFICA LE VARIABILI**
 * **PAX:** Numero partecipanti richiesto dall'utente ({pax_input}).
@@ -362,7 +370,7 @@ Usa sempre questa tabella per calcolare i coefficienti:
     * > 900 pax: **0.30**
 
 * **ALTRI MOLTIPLICATORI (Default = 1.00 se non specificato):**
-    * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) [DEFAULT SE NON SPECIFICATO] | >4h (1.15)
+    * **M_DURATA:** ≤1h (1.05) | 1-2h (1.07) | 2-4h (1.10) | >4h (1.15)
     * **M_LINGUA:** Italiano (1.05) | Inglese (1.10)
     * **M_LOCATION:** Milano (1.00) | Roma (0.95) | Centro (1.05) | Nord/Sud (1.15) | Isole (1.30)
     * **M_STAGIONE:** Mag-Ott (1.10) | Nov-Apr (1.02)
@@ -460,8 +468,7 @@ if generate_btn:
         st.sidebar.error("⚠️ ERRORE: Inserisci il Nome Cliente per procedere!")
         st.stop()
     
-    # MODIFICA 1b: Uso durata_effettiva nel prompt utente
-    prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_effettiva}. Obiettivo: {obiettivo_input}."
+    prompt_to_process = f"Ciao, sono {cliente_input}. Vorrei un preventivo per {pax_input} persone, data {data_evento_input}, a {citta_input}. Durata: {durata_input}. Obiettivo: {obiettivo_input}."
     
     # Aggiungi messaggio utente alla chat e alla history
     st.session_state.messages.append({"role": "user", "content": prompt_to_process})
