@@ -323,7 +323,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: USO IMMAGINE QUADRATINO ROSSO) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: USO TASSATIVO COLONNA LinkHubSpot) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 
 BASE_INSTRUCTIONS = f"""
@@ -404,11 +404,11 @@ Devi presentare ESATTAMENTE 12 format divisi in 4 categorie.
 ⚠️ **IMPORTANTE: LAYOUT CON TRIPLA VERNICIATURA (TD -> TABLE -> TD)**
 Usa ESCLUSIVAMENTE questo HTML. 
 La prima cella (TD width 5) è la COLONNA ROSSA. Al suo interno INSERISCI L'IMMAGINE QUADRATINO ROSSO per forzare la larghezza corretta.
-⚠️ **FIX LARGHEZZA:** Usa `padding:0px` e inserisci l'immagine `https://eu1.hubs.ly/H0qrGMb0`.
+⚠️ **FIX LARGHEZZA:** Usa `padding:0px` e inserisci l'immagine `https://www.teambuilding.it/red.png`.
 Copia ESATTAMENTE:
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://eu1.hubs.ly/H0qrGMb0" width="5" style="display: block; border: 0;"></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -443,8 +443,8 @@ Le categorie sono:
 
 **FASE 3: TABELLA RIEPILOGATIVA (BORDI INVISIBILI - UNICA TABELLA)**
 NON USARE MARKDOWN. Genera una tabella HTML pura.
-⚠️ **LINK:** Cerca il link PDF nella colonna "Scheda Tecnica" o "Link" del database e inseriscilo in href.
-⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il nome del file (es. "Cooking.pdf" o "Swat.pdf").
+⚠️ **SELEZIONE LINK:** Usa ESCLUSIVAMENTE il link presente nella colonna "LinkHubSpot" del database. NON USARE ALTRE COLONNE.
+⚠️ **TESTO LINK:** Il testo cliccabile DEVE ESSERE il "Nome del Format" seguito da ".pdf" (es. "Csi Project.pdf").
 ⚠️ **CRITICO:** Crea UNA SOLA tabella contenente tutti i format.
 ⚠️ **CRITICO:** Per OGNI format devi creare una NUOVA riga `<tr>`.
 ⚠️ **BORDI:** Usa `border="0"`.
@@ -452,10 +452,10 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
 ⚠️ **SPACER:** Inserisci la riga con `{spacer_text}` SOLO come ULTIMA riga della tabella.
 
 **TITOLO TABELLA (TRIPLA VERNICIATURA - Colonna Rossa Invisibile):**
-⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva.
+⚠️ **ISTRUZIONE:** Usa ESATTAMENTE lo stesso codice HTML delle categorie qui sopra per garantire identità visiva (con immagine red.png).
 `<br><table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://eu1.hubs.ly/H0qrGMb0" width="5" style="display: block; border: 0;"></td>
+    <td width="5" bgcolor="#ff4b4b" style="background-color: #ff4b4b; width: 5px; padding: 0px; margin: 0px;"><img src="https://www.teambuilding.it/red.png" width="5" style="display: block; border: 0;"></td>
     <td width="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;"></td>
     <td width="585" bgcolor="#f8f9fa" style="background-color: #f8f9fa;" align="left">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#f8f9fa" style="background-color: #f8f9fa;">
@@ -485,7 +485,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   <tr>
     <td align="left"><strong>🍳 Nome Format</strong></td>
     <td align="center">€ Prezzo</td>
-    <td align="center"><a href="LINK_REALE_DAL_DATABASE">NomeFormat.pdf</a></td>
+    <td align="center"><a href="LINK_DALLA_COLONNA_LINKHUBSPOT">NomeFormat.pdf</a></td>
   </tr>
   
   <tr>
