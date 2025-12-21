@@ -415,7 +415,7 @@ NON USARE MARKDOWN. Genera una tabella HTML pura.
   <tr>
     <td bgcolor="#eeeeee" style="background-color: #eeeeee; padding: 35px;" align="left">
       <font color="#000000" face="Tahoma, sans-serif" style="font-size: 16px; font-weight: bold; color: #000000;">TABELLA RIEPILOGATIVA</font><br>
-      <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input} | {obiettivo_input}</i></font>
+      <font color="#666666" face="Tahoma, sans-serif" style="font-size: 13px; font-style: italic; color: #666666;">Brief: {cliente_input} | {pax_input} | {data_evento_input} | {citta_input} | {durata_input}</i></font>
     </td>
   </tr>
   <tr>
@@ -554,16 +554,3 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
-
-
-
-
-
-
-
-
-
-
-
-
-
