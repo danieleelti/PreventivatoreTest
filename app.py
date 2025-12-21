@@ -290,16 +290,35 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO: NO IMG, 2 COLONNE 59+541, LINK SALVI) ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO CON LOGICA "CONSULENTE") ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 BASE_INSTRUCTIONS = f"""
 SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
 {context_brief}
 
-### 🛡️ PROTOCOLLO
+### 🧠 INTELLIGENZA DI SELEZIONE E ANALISI (PRIORITÀ ASSOLUTA)
+
+**FASE 0: ANALISI DELLA QUALITÀ DEL BRIEF**
+Prima di calcolare o proporre qualsiasi cosa, valuta il campo "Obiettivo":
+1.  **SE IL BRIEF È GENERICO/INSUFFICIENTE** (es. contiene solo "team building", "divertimento", "festa", "cena", o è vuoto):
+    * **STOP.** NON generare tabelle. NON calcolare prezzi.
+    * Scrivi un messaggio cordiale al cliente ({cliente_input}): "Ciao! Per creare il preventivo perfetto ho bisogno di un paio di dettagli in più per non proporti attività a caso."
+    * Fai **2 DOMANDE SECCHE** (es. "Preferenza Indoor o Outdoor?", "Cercate qualcosa di dinamico, creativo o investigativo?", "Avete un tema specifico?").
+    * Attendi la risposta.
+
+2.  **SE IL BRIEF È SUFFICIENTE** (contiene keyword specifiche es. "Giallo", "Cucina", "iPad", "Outdoor", "Convention"):
+    * Procedi con la generazione completa.
+    * **ALGORITMO DI MATCHING:** Scegli i 12 format cercando corrispondenze tra le parole dell'Obiettivo e le colonne 'Tags', 'Categoria' o 'Descrizione' del database.
+        * *Es. "Tecnologico"* -> Priorità format iPad/AI.
+        * *Es. "Investigativo"* -> Priorità CSI, Delitto, Escape.
+        * *Es. "Creativo"* -> Priorità Painting, Movie, Lego.
+    * NON scegliere format a caso.
+
+---
+
+### 🛡️ PROTOCOLLO E CALCOLO (SOLO SE SUPERI LA FASE 0)
 1.  **USO DEL DATABASE:** Usa SOLO i dati caricati (NON inventare).
-2.  **QUALIFICAZIONE:** Se il brief è insufficiente, chiedi info.
-3.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
+2.  **DIVIETO:** È VIETATO SCRIVERE "SU RICHIESTA" o lasciare prezzi vuoti.
 
 ### 🔢 CALCOLO PREVENTIVI (ALGORITMO RIGOROSO - TEMP 0.0)
 
@@ -359,7 +378,7 @@ Prendi le ultime due cifre del TOTALE_GREZZO:
 
 ---
 
-### 🚦 ORDINE DI OUTPUT (OBBLIGATORIO)
+### 🚦 ORDINE DI OUTPUT (SE SUPERI FASE 0)
 
 **FASE 1: INTRODUZIONE**
 Scrivi un paragrafo di 3-4 righe (testo normale, usa un `<br>` extra alla fine per spaziatura). Saluta {cliente_input}, cita i dettagli del brief e usa un tono caldo e professionale.
@@ -383,7 +402,7 @@ Copia ESATTAMENTE:
   </tr>
 </table>`
 
-2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format.
+2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format scelti (usa l'algoritmo di matching).
 ⚠️ **SPAZIATURA:** Usa un solo `<br>` alla fine della descrizione per spaziare i format.
 `<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
 
@@ -554,3 +573,4 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
