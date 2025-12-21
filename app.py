@@ -290,7 +290,7 @@ else:
     PASSA DIRETTAMENTE ALLA TABELLA.
     """
 
-# --- 5. SYSTEM PROMPT (AGGIORNATO CON LOGICA "CONSULENTE") ---
+# --- 5. SYSTEM PROMPT (AGGIORNATO: SOLUZIONE SPAZIATURA FORMAT) ---
 context_brief = f"DATI BRIEF: Cliente: {cliente_input}, Pax: {pax_input}, Data: {data_evento_input}, Città: {citta_input}, Durata: {durata_input}, Obiettivo: {obiettivo_input}."
 BASE_INSTRUCTIONS = f"""
 SEI IL SENIOR EVENT MANAGER DI TEAMBUILDING.IT. Rispondi in Italiano.
@@ -403,8 +403,8 @@ Copia ESATTAMENTE:
 </table>`
 
 2.  **FORMAT ITEMS:** Sotto il titolo categoria, elenca i format scelti (usa l'algoritmo di matching).
-⚠️ **SPAZIATURA:** Usa un solo `<br>` alla fine della descrizione per spaziare i format.
-`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br>`
+⚠️ **SPAZIATURA CRITICA:** Alla fine di ogni descrizione, devi inserire TASSATIVAMENTE DUE `<br><br>`. È VIETATO attaccare il testo successivo.
+`<strong>NOME FORMAT</strong><br>Descrizione ricca e approfondita (ALMENO 3-4 RIGHE). Spiega le dinamiche di gioco, il coinvolgimento e perché è divertente.<br><br>`
 
 Le categorie sono:
 1.  **I BEST SELLER** (4 format) - Claim: "I più amati dai nostri clienti"
@@ -573,4 +573,5 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "model
             st.success(f"✅ Preventivo per {cliente_input} salvato!")
         else:
             st.error("Errore salvataggio.")
+
 
